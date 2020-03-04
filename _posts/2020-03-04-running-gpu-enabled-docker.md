@@ -11,7 +11,7 @@ In order to run docker images with GPU enabled, you are going to need:
 
 # Install docker
 
-```bash
+```
 sudo apt-get install \
     apt-transport-https \
     ca-certificates \
@@ -31,7 +31,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 # Install nvidia-container-toolkit
 
-```bash
+```
 # Add the package repositories
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
@@ -43,13 +43,29 @@ sudo systemctl restart docker
 
 [source](https://github.com/NVIDIA/nvidia-docker)
 
-# Launch your docker
+# Launch the docker for PyTorch
 
-``bash
-docker run python:3-slim --gpu all -it ipython
+In order to use cuda you need a nvidia enabled image, that will make everything simpler.
+You could of course link your own cuda library via volume mounting but it's cumbersome (and I didn't check that it works)
+
+1. Create an account on [https://ngc.nvidia.com/](https://ngc.nvidia.com/)
+2. Go to the create an API key page [https://ngc.nvidia.com/setup/api-key](https://ngc.nvidia.com/setup/api-key)
+3. Generate the key and copy it
 
 ```
+docker login nvcr.io
+Username: $oauthtoken
+Password: <Your Key>
+docker run --gpus all -it --rm nvcr.io/nvidia/pytorch:20.02-py3 bash
+python -c "import torch; print(torch.cuda.is_available())"
+# True
+```
+
+If you fail to login the `docker run` command will fail with `unauthenticated` error.
 
 Caveat: This is the only option for now, docker-compose _CANNOT_ run the --gpu option.
-To check updates, look at this [issue](https://github.com/docker/compose/issues/6691)
-```
+To check updates for docker compose, look at this [issue](https://github.com/docker/compose/issues/6691)
+
+Bonus: Nvidia put up _a lot_ of containers with various libraries enabled check it out in their [catalog](https://ngc.nvidia.com/catalog/)
+
+## Enjoy !
