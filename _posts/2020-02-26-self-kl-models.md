@@ -6,7 +6,6 @@ toc: true
 badges: true
 comments: true
 categories: [ml, nlp, kldivergence]
-image: images/chart-preview.png
 nb_path: _notebooks/2020-02-26-self-kl-models.ipynb
 layout: notebook
 ---
