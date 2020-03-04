@@ -438,7 +438,7 @@ the training set.</p>
 <p>Other out of distribution detector have been proposed. Here is a sample of methods:</p>
 <ul>
 <li>
-<a href="https://arxiv.org/pdf/1906.02845.pdf">Likelihood Ratios for Out-of-Distribution Detection</a>: Propose to learn 2 distinct models, one "raw", one with perturbation instilled into the dataset, and look at the log likelihood ratio of the two models, claim is that the difference between the two will reflect how "far" input is from the semantic part of the manifold of X. $p(x) = p(x_background)p(x_semantic)$, the perturbation needs to lie only on $x_semantic$.</li>
+<a href="https://arxiv.org/pdf/1906.02845.pdf">Likelihood Ratios for Out-of-Distribution Detection</a>: Propose to learn 2 distinct models, one "raw", one with perturbation instilled into the dataset, and look at the log likelihood ratio of the two models, claim is that the difference between the two will reflect how "far" input is from the semantic part of the manifold of X. $p(x) = p(x_{background})p(x_{semantic})$, the perturbation needs to lie only on $x_{semantic}$.</li>
 <li>
 <a href="https://arxiv.org/pdf/1910.04241.pdf">Out-of-distribution Detection in Classifiers via Generation</a>: Propose to use autoencoder (or GANs) to generate a low dimensional representation of the manifold of the dataset X, then perturb X on that representation. Those perturbated examples are trained to become a new "class" of the output of the classifier. </li>
 <li>
