@@ -28,7 +28,7 @@ layout: notebook
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<blockquote><p>TL;DR. By training two models at the same time (same architecture, same loss, but different initialization)
+<blockquote><p>TL;DR. By training two models in the same dataset order with same architecture, same loss, but different initialization, 
 I was able to obtain a consistent out-of-distribution detector by measuring the kl-divergence between model outputs.
 This out-of-distribution measure used on text could lead to unsupervised text classification.</p>
 </blockquote>
@@ -38,7 +38,7 @@ This out-of-distribution measure used on text could lead to unsupervised text cl
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="What's-the-problem-?">What's the problem ?<a class="anchor-link" href="#What's-the-problem-?">&#182;</a></h2><p>ML models usually are not really capable of predicting how well the data you<br>
+<h2 id="What's-the-problem-?">What's the problem ?<a class="anchor-link" href="#What's-the-problem-?"> </a></h2><p>ML models usually are not really capable of predicting how well the data you<br>
 feed them is close to what was in the dataset. It really matters in production 
 models as they might make really stupid mistakes just because they are off<br>
 the training set.</p>
@@ -237,7 +237,7 @@ the training set.</p>
     <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
 <span class="n">MAX</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MNIST Model says : This is a {MAX.indices.item()} with probability {MAX.values.item() * 100:.2f}%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MNIST Model says : This is a </span><span class="si">{</span><span class="n">MAX</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2"> with probability </span><span class="si">{</span><span class="n">MAX</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
 <span class="n">pil_img</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">((</span><span class="mi">240</span><span class="p">,</span> <span class="mi">240</span><span class="p">))(</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToPILImage</span><span class="p">()(</span><span class="n">dummy_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">pil_img</span><span class="p">)</span>
 </pre></div>
@@ -278,7 +278,7 @@ the training set.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Other-approaches">Other approaches<a class="anchor-link" href="#Other-approaches">&#182;</a></h2>
+<h2 id="Other-approaches">Other approaches<a class="anchor-link" href="#Other-approaches"> </a></h2>
 </div>
 </div>
 </div>
@@ -304,7 +304,7 @@ the training set.</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Our-approach">Our approach<a class="anchor-link" href="#Our-approach">&#182;</a></h2>
+<h2 id="Our-approach">Our approach<a class="anchor-link" href="#Our-approach"> </a></h2>
 </div>
 </div>
 </div>
@@ -321,13 +321,13 @@ The core argument for this approach is that the neural network captures the data
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Experiments">Experiments<a class="anchor-link" href="#Experiments">&#182;</a></h2>
+<h2 id="Experiments">Experiments<a class="anchor-link" href="#Experiments"> </a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-1">Experiment 1<a class="anchor-link" href="#Experiment-1">&#182;</a></h3><p>MNIST attack like failure presented before.</p>
+<h3 id="Experiment-1">Experiment 1<a class="anchor-link" href="#Experiment-1"> </a></h3><p>MNIST attack like failure presented before.</p>
 
 </div>
 </div>
@@ -561,10 +561,10 @@ Test set: Average loss: 0.0069, len 10000
     <span class="k">else</span><span class="p">:</span>
         <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MNIST Model says : This is a {MAX1.indices.item()} with probability {MAX1.values.item() * 100:.2f}%&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MNIST Model 2 says : This is a {MAX2.indices.item()} with probability {MAX2.values.item() * 100:.2f}%&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MNIST Model says : This is a </span><span class="si">{</span><span class="n">MAX1</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2"> with probability </span><span class="si">{</span><span class="n">MAX1</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MNIST Model 2 says : This is a </span><span class="si">{</span><span class="n">MAX2</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2"> with probability </span><span class="si">{</span><span class="n">MAX2</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;KL-divergence is {kl_loss / ref_kl_loss} {kl_loss2 / ref_kl_loss}&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;KL-divergence is </span><span class="si">{</span><span class="n">kl_loss</span> <span class="o">/</span> <span class="n">ref_kl_loss</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">kl_loss2</span> <span class="o">/</span> <span class="n">ref_kl_loss</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ATTACK SUCCEEDED&quot;</span><span class="p">)</span>
@@ -767,7 +767,7 @@ ATTACK FAILED
     <span class="n">attacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">success</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attack success rate {sum(attacks)/len(attacks) * 100:.2f}%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attack success rate </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">attacks</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">attacks</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
     
 </pre></div>
 
@@ -801,7 +801,7 @@ ATTACK FAILED
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-2">Experiment 2<a class="anchor-link" href="#Experiment-2">&#182;</a></h3><p>Now let's test this on common ood detection for classic datasets. We will add ood detection for the train dataset, just to check that we don't <em>exclude</em> too much of the original dataset. Datasets used will be MNIST, FashionMNIST</p>
+<h3 id="Experiment-2">Experiment 2<a class="anchor-link" href="#Experiment-2"> </a></h3><p>Now let's test this on common ood detection for classic datasets. We will add ood detection for the train dataset, just to check that we don't <em>exclude</em> too much of the original dataset. Datasets used will be MNIST, FashionMNIST</p>
 
 </div>
 </div>
@@ -884,7 +884,7 @@ ATTACK FAILED
 
 <span class="k">def</span> <span class="nf">run_datasets</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">dataset_cls</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{dataset_cls.__name__}</span><span class="s1">.pt&#39;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.pt&#39;</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">continue</span>
@@ -931,7 +931,7 @@ ATTACK FAILED
     <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
     
     <span class="k">for</span> <span class="n">dataset_cls</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{dataset_cls.__name__}</span><span class="s1">.pt&#39;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.pt&#39;</span>
         
         <span class="n">model</span> <span class="o">=</span> <span class="n">MultiNet</span><span class="p">(</span><span class="n">Net</span><span class="p">(),</span> <span class="n">Net</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
@@ -977,10 +977,10 @@ ATTACK FAILED
                 
                 
                 <span class="n">OOD</span> <span class="o">+=</span> <span class="n">out_of_distrib</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trained on </span><span class="si">{dataset_cls.__name__}</span><span class="s2"> we detected on </span><span class="si">{dataset_cls2.__name__}</span><span class="s2"> </span><span class="si">{OOD}</span><span class="s2">/{len(test_loader2.dataset)} ({float(OOD)/len(test_loader2.dataset) * 100:.2f}%) out of distribution&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trained on </span><span class="si">{</span><span class="n">dataset_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> we detected on </span><span class="si">{</span><span class="n">dataset_cls2</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">OOD</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_loader2</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">OOD</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">test_loader2</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%) out of distribution&quot;</span><span class="p">)</span>
                    
         <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">all_labels</span><span class="p">,</span> <span class="n">all_scores</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC for </span><span class="si">{dataset_cls.__name__}</span><span class="s2"> : </span><span class="si">{auc}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC for </span><span class="si">{</span><span class="n">dataset_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">auc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">test_datasets</span><span class="p">()</span>
 </pre></div>
@@ -1028,21 +1028,21 @@ AUC for FashionMNIST : 0.8571711399999999
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-2-bis">Experiment 2 bis<a class="anchor-link" href="#Experiment-2-bis">&#182;</a></h3><p>Same experiment but with fine tuned, larger networks on the same datasets</p>
+<h3 id="Experiment-2-bis">Experiment 2 bis<a class="anchor-link" href="#Experiment-2-bis"> </a></h3><p>Same experiment but with fine tuned, larger networks on the same datasets</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-3">Experiment 3<a class="anchor-link" href="#Experiment-3">&#182;</a></h3><p>Check that two identical networks (same initalization) actually don't work. It's just a sanity check. We should obtain always kl_div = 0 no matter where we are in the input space.</p>
+<h3 id="Experiment-3">Experiment 3<a class="anchor-link" href="#Experiment-3"> </a></h3><p>Check that two identical networks (same initalization) actually don't work. It's just a sanity check. We should obtain always kl_div = 0 no matter where we are in the input space.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-4">Experiment 4<a class="anchor-link" href="#Experiment-4">&#182;</a></h3><p>Test on a larger output space, like CIFAR-100 and SVHN, to check that part of the limits are actually due to small number of output classes
+<h3 id="Experiment-4">Experiment 4<a class="anchor-link" href="#Experiment-4"> </a></h3><p>Test on a larger output space, like CIFAR-100 and SVHN, to check that part of the limits are actually due to small number of output classes
 for MNIST/FashionMNIST
 Other idea is to test on Transformers. Early experiment seems to show that we can use that idea to detect different language within text with just the kl_div used as a distance.</p>
 <p>Found French book within english books dataset, AND english paragraphs <em>within</em> this french book.
@@ -1053,14 +1053,14 @@ Needs some work to clean this experiment</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-5">Experiment 5<a class="anchor-link" href="#Experiment-5">&#182;</a></h3><p>Need to test with various training schemes, regularization schemes (dropout, batchnorm, l2 penalization) and so on. We should find that the smoother in-distribution our models behave the more this method should work. Hopefully test accuracy <em>should</em> be a good smoothness proxy.</p>
+<h3 id="Experiment-5">Experiment 5<a class="anchor-link" href="#Experiment-5"> </a></h3><p>Need to test with various training schemes, regularization schemes (dropout, batchnorm, l2 penalization) and so on. We should find that the smoother in-distribution our models behave the more this method should work. Hopefully test accuracy <em>should</em> be a good smoothness proxy.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-6--(Unsupervised-text-classification)-or-fuse-with-experiment-4?">Experiment 6  (Unsupervised text classification) or fuse with experiment 4?<a class="anchor-link" href="#Experiment-6--(Unsupervised-text-classification)-or-fuse-with-experiment-4?">&#182;</a></h3>
+<h3 id="Experiment-6--(Unsupervised-text-classification)-or-fuse-with-experiment-4?">Experiment 6  (Unsupervised text classification) or fuse with experiment 4?<a class="anchor-link" href="#Experiment-6--(Unsupervised-text-classification)-or-fuse-with-experiment-4?"> </a></h3>
 </div>
 </div>
 </div>
@@ -1077,14 +1077,14 @@ or different patterns of writing (old english, irish, french, or event dictionna
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiment-7">Experiment 7<a class="anchor-link" href="#Experiment-7">&#182;</a></h3><p>Run this method with 2, 3, 4, and so on models. We should get exponential improved accuracy, if the random behavious for out-of-distribution for models is correct.</p>
+<h3 id="Experiment-7">Experiment 7<a class="anchor-link" href="#Experiment-7"> </a></h3><p>Run this method with 2, 3, 4, and so on models. We should get exponential improved accuracy, if the random behavious for out-of-distribution for models is correct.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Limits">Limits<a class="anchor-link" href="#Limits">&#182;</a></h2>
+<h2 id="Limits">Limits<a class="anchor-link" href="#Limits"> </a></h2>
 </div>
 </div>
 </div>
@@ -1108,7 +1108,7 @@ or different patterns of writing (old english, irish, french, or event dictionna
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Future-Work">Future Work<a class="anchor-link" href="#Future-Work">&#182;</a></h2>
+<h2 id="Future-Work">Future Work<a class="anchor-link" href="#Future-Work"> </a></h2>
 </div>
 </div>
 </div>
