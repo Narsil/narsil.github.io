@@ -42,7 +42,7 @@ layout: notebook
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">K</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">m</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">K</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">giga</span>
 
 <span class="n">sigma</span> <span class="o">=</span> <span class="mf">5.67</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">W</span> <span class="o">*</span><span class="n">m</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mi">5778</span> <span class="o">*</span> <span class="n">K</span>
@@ -227,46 +227,25 @@ layout: notebook
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">J</span>
-<span class="n">tep</span> <span class="o">=</span> <span class="mi">41_868</span> <span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">9</span> <span class="o">*</span> <span class="n">J</span>
-<span class="n">Mtep</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span> <span class="o">*</span> <span class="n">tep</span>
-<span class="n">Humanity_total_annual_consumption</span> <span class="o">=</span> <span class="mi">13_511</span> <span class="o">*</span> <span class="n">Mtep</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">Humanity_total_annual_consumption</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>565678548000000000000000*joule
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">s</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">J</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">W</span>
 <span class="kn">from</span> <span class="nn">sympy.physics.units.util</span> <span class="kn">import</span> <span class="n">convert_to</span>
-<span class="n">humanity_power_consumption</span> <span class="o">=</span> <span class="n">Humanity_total_annual_consumption</span> <span class="o">/</span> <span class="p">(</span><span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span><span class="p">,</span> <span class="p">[</span><span class="n">W</span><span class="p">]))</span>
+
+<span class="n">million</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span><span class="mi">6</span>
+<span class="n">kilo</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span>
+<span class="n">giga</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span>
+<span class="n">toe</span> <span class="o">=</span> <span class="mf">41.868</span> <span class="o">*</span> <span class="n">giga</span> <span class="o">*</span> <span class="n">J</span>
+<span class="n">ktoe</span> <span class="o">=</span> <span class="n">kilo</span> <span class="o">*</span> <span class="n">toe</span>
+<span class="n">Mtoe</span> <span class="o">=</span> <span class="n">million</span> <span class="o">*</span> <span class="n">toe</span>
+
+<span class="n">hour</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">s</span>
+<span class="n">year</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="mf">365.25</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">3852538</span><span class="p">,</span><span class="mi">2949909</span><span class="p">,</span><span class="mi">670298</span><span class="p">,</span><span class="mi">335519</span><span class="p">,</span><span class="mi">204190</span><span class="p">,</span><span class="mi">1286064</span><span class="p">,</span><span class="mi">4329220</span><span class="p">])</span>
+<span class="n">Humanity_total_annual_consumption</span> <span class="o">=</span> <span class="n">base</span> <span class="o">*</span> <span class="n">ktoe</span>
+
+
+<span class="n">humanity_power_consumption</span> <span class="o">=</span> <span class="n">Humanity_total_annual_consumption</span> <span class="o">/</span> <span class="n">year</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span><span class="o">.</span><span class="n">n</span><span class="p">(),</span> <span class="p">[</span><span class="n">W</span><span class="p">])</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 </pre></div>
 
     </div>
@@ -279,7 +258,7 @@ layout: notebook
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>1.79252715035364e+16*watt
+<pre>18080149776408.9*watt
 </pre>
 </div>
 </div>
@@ -297,8 +276,7 @@ layout: notebook
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units.util</span> <span class="kn">import</span> <span class="n">convert_to</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span> <span class="o">/</span> <span class="n">power_received</span><span class="p">,</span> <span class="p">[</span><span class="n">J</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span> <span class="o">/</span> <span class="n">power_received</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">[</span><span class="n">J</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 </pre></div>
 
     </div>
@@ -311,7 +289,7 @@ layout: notebook
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>0.101680455844062
+<pre>0.0102558997258785
 </pre>
 </div>
 </div>
@@ -324,7 +302,7 @@ layout: notebook
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We are currently consuming <strong>10% of the maximum capacity of the earth covered by a Dyson sphere of solar panels</strong>.</p>
+<p>We are currently consuming <strong>0.01% of the maximum capacity of the earth covered by a Dyson sphere of solar panels</strong>.</p>
 
 </div>
 </div>
@@ -392,7 +370,7 @@ And 38.4% is covered of agricultural land <a href="https://en.wikipedia.org/wiki
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>1.52084087357243e+15*watt
-1178.64214560661
+1.18882587196246
 </pre>
 </div>
 </div>
@@ -411,7 +389,7 @@ And 38.4% is covered of agricultural land <a href="https://en.wikipedia.org/wiki
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the end we are currently consuming <strong>1179% of the realistic available solar power energy</strong>. That's 10 times more than we should. And 100% would require posing solar panels everywhere on the planet that is not a forest or agricultural land.</p>
+<p>In the end we are currently consuming <strong>1.2% of the realistic available solar power energy</strong>. That's would require posing solar panels everywhere on the planet that is not a forest or agricultural land. And we don't account yet for Energy return on energy invested (EROEI) which is likely to increase that percentage.</p>
 <p>NB: This is a very superficial attempt to evaluate these numbers, however the result should be correct within an order of magnitude.</p>
 
 </div>
