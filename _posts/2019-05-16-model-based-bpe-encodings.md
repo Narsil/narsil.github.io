@@ -4,7 +4,7 @@ title: 'Model based encodings'
 author: nicolas
 toc: true
 description: How to use BPE without this hardcoded algorithm
-categories: [ml, nlp]
+tags: [ml, nlp]
 ---
 
 [Byte-pair encodings](https://en.wikipedia.org/wiki/Byte_pair_encoding) (BPE) are now very commonly used in NLP. In [GPT-2](https://openai.com/blog/better-language-models/), Byte-pair encodings are used to preformat the raw texts before feeding the model. But this is a relatively costly step for your preprocessing and has some limitations. For instance, you have to split your data on spaces if you want your byte pair algorithm to compute in reasonable time.

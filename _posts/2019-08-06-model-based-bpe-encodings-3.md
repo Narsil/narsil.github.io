@@ -2,7 +2,7 @@
 layout: post
 title: 'Model based encodings (3)'
 author: nicolas
-categories: [ml, nlp]
+tags: [ml, nlp]
 ---
 
 In the [first segment]({{ site.baseurl }}{% post_url 2019-05-16-model-based-bpe-encodings %})
