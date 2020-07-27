@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/narsil.github.io/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Creating a translation app | Narsil</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Creating a translation app" />
+<meta name="author" content="nicolas" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to create a custom clone of translate.google.com" />
+<meta property="og:description" content="How to create a custom clone of translate.google.com" />
+<link rel="canonical" href="https://narsil.github.io/narsil.github.io/ml/nlp/react/2020/07/27/creating-a-translation-app.html" />
+<meta property="og:url" content="https://narsil.github.io/narsil.github.io/ml/nlp/react/2020/07/27/creating-a-translation-app.html" />
+<meta property="og:site_name" content="Narsil" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://narsil.github.io/narsil.github.io/ml/nlp/react/2020/07/27/creating-a-translation-app.html","@type":"BlogPosting","headline":"Creating a translation app","dateModified":"2020-07-27T00:00:00-05:00","datePublished":"2020-07-27T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://narsil.github.io/narsil.github.io/ml/nlp/react/2020/07/27/creating-a-translation-app.html"},"author":{"@type":"Person","name":"nicolas"},"description":"How to create a custom clone of translate.google.com","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/narsil.github.io/assets/main.css">
+  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://narsil.github.io/narsil.github.io/feed.xml" title="Narsil" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+          ]}
+        );
+      });
+    </script>
+  
+
+  <script>
+  function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+  }
+  window.onload = wrap_img;
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+      // add link icon to anchor tags
+      var elem = document.querySelectorAll(".anchor-link")
+      elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+      // remove paragraph tags in rendered toc (happens from notebooks)
+      var toctags = document.querySelectorAll(".toc-entry")
+      toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+  </script>
+</head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/narsil.github.io/">Narsil</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/narsil.github.io/about/">About Me</a><a class="page-link" href="/narsil.github.io/search/">Search</a><a class="page-link" href="/narsil.github.io/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Creating a translation app</h1><p class="page-description">How to create a custom clone of translate.google.com</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-27T00:00:00-05:00" itemprop="datePublished">
+        Jul 27, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">nicolas</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      14 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/narsil.github.io/categories/#ml">ml</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/narsil.github.io/categories/#nlp">nlp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/narsil.github.io/categories/#react">react</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#find-a-correct-training-loop">Find a correct training loop</a></li>
+<li class="toc-entry toc-h2"><a href="#the-data">The data</a></li>
+<li class="toc-entry toc-h2"><a href="#the-actual-training-loop">The actual training loop</a></li>
+<li class="toc-entry toc-h2"><a href="#checking-the-final-result">Checking the final result</a></li>
+<li class="toc-entry toc-h2"><a href="#productizing">Productizing</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#flask-server">Flask server</a></li>
+<li class="toc-entry toc-h3"><a href="#implementing-the-translate-function">Implementing the translate function.</a></li>
+<li class="toc-entry toc-h3"><a href="#react-front">React front</a></li>
+<li class="toc-entry toc-h3"><a href="#lets-dockerize-">Let’s dockerize !</a></li>
+<li class="toc-entry toc-h3"><a href="#kubernetes-cluster">Kubernetes cluster</a></li>
+<li class="toc-entry toc-h3"><a href="#what-couldshould-be-done-next">What could/should be done next.</a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#for-the-model">For the model:</a></li>
+<li class="toc-entry toc-h4"><a href="#for-the-backend">For the backend:</a></li>
+<li class="toc-entry toc-h4"><a href="#for-the-frontend">For the frontend:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><blockquote>
+  <p>TL;DR Recently moved to the Netherlands, in order to avoid Googling translate everything, I did the next best thing to learning the language: I created a clone of translate.google.com</p>
+</blockquote>
+
+<h2 id="find-a-correct-training-loop">
+<a class="anchor" href="#find-a-correct-training-loop" aria-hidden="true"><span class="octicon octicon-link"></span></a>Find a correct training loop</h2>
+
+<p>My first instinct was to check <a href="https://github.com/huggingface/transformers">Hugging Face</a> as this repo contains solid implementations that I know are easy to change. However, in that particular instance, the example for translation does not start from scratch, and I wanted to check what multilingual translation could do here, as I’m using English, Dutch &amp; French on translate.google.com (For food sometimes french is much better than english for me).</p>
+
+<p>My second guess was <a href="https://github.com/pytorch/fairseq">Fairseq</a> from facebook. In their example there is an actual example for multilingual German, French, English. Close enough for my needs. First things first, start to follow the example by the book. Most implementations out there are broken and won’t work out of the box.</p>
+
+<p>This time, it turned out particularly smooth. Clone the repo then follow the <a href="https://github.com/pytorch/fairseq/tree/master/examples/translation#multilingual-translation">instructions</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># First install sacrebleu and sentencepiece
+pip install sacrebleu sentencepiece
+
+# Then download and preprocess the data
+cd examples/translation/
+bash prepare-iwslt17-multilingual.sh
+cd ../..
+
+# Binarize the de-en dataset
+TEXT=examples/translation/iwslt17.de_fr.en.bpe16k
+fairseq-preprocess --source-lang de --target-lang en \
+    --trainpref $TEXT/train.bpe.de-en \
+    --validpref $TEXT/valid0.bpe.de-en,$TEXT/valid1.bpe.de-en,$TEXT/valid2.bpe.de-en,$TEXT/valid3.bpe.de-en,$TEXT/valid4.bpe.de-en,$TEXT/valid5.bpe.de-en \
+    --destdir data-bin/iwslt17.de_fr.en.bpe16k \
+    --workers 10
+
+# Binarize the fr-en dataset
+# NOTE: it's important to reuse the en dictionary from the previous step
+fairseq-preprocess --source-lang fr --target-lang en \
+    --trainpref $TEXT/train.bpe.fr-en \
+    --validpref $TEXT/valid0.bpe.fr-en,$TEXT/valid1.bpe.fr-en,$TEXT/valid2.bpe.fr-en,$TEXT/valid3.bpe.fr-en,$TEXT/valid4.bpe.fr-en,$TEXT/valid5.bpe.fr-en \
+    --tgtdict data-bin/iwslt17.de_fr.en.bpe16k/dict.en.txt \
+    --destdir data-bin/iwslt17.de_fr.en.bpe16k \
+    --workers 10
+
+# Train a multilingual transformer model
+# NOTE: the command below assumes 1 GPU, but accumulates gradients from
+#       8 fwd/bwd passes to simulate training on 8 GPUs
+mkdir -p checkpoints/multilingual_transformer
+CUDA_VISIBLE_DEVICES=0 fairseq-train data-bin/iwslt17.de_fr.en.bpe16k/ \
+    --max-epoch 50 \
+    --ddp-backend=no_c10d \
+    --task multilingual_translation --lang-pairs de-en,fr-en \
+    --arch multilingual_transformer_iwslt_de_en \
+    --share-decoders --share-decoder-input-output-embed \
+    --optimizer adam --adam-betas '(0.9, 0.98)' \
+    --lr 0.0005 --lr-scheduler inverse_sqrt --min-lr '1e-09' \
+    --warmup-updates 4000 --warmup-init-lr '1e-07' \
+    --label-smoothing 0.1 --criterion label_smoothed_cross_entropy \
+    --dropout 0.3 --weight-decay 0.0001 \
+    --save-dir checkpoints/multilingual_transformer \
+    --max-tokens 4000 \
+    --update-freq 8
+
+# Generate and score the test set with sacrebleu
+SRC=de
+sacrebleu --test-set iwslt17 --language-pair ${SRC}-en --echo src \
+    | python scripts/spm_encode.py --model examples/translation/iwslt17.de_fr.en.bpe16k/sentencepiece.bpe.model \
+    &gt; iwslt17.test.${SRC}-en.${SRC}.bpe
+cat iwslt17.test.${SRC}-en.${SRC}.bpe \
+    | fairseq-interactive data-bin/iwslt17.de_fr.en.bpe16k/ \
+      --task multilingual_translation --lang-pairs de-en,fr-en \
+      --source-lang ${SRC} --target-lang en \
+      --path checkpoints/multilingual_transformer/checkpoint_best.pt \
+      --buffer-size 2000 --batch-size 128 \
+      --beam 5 --remove-bpe=sentencepiece \
+    &gt; iwslt17.test.${SRC}-en.en.sys
+</code></pre></div></div>
+
+<h2 id="the-data">
+<a class="anchor" href="#the-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>The data</h2>
+
+<p>While it’s training, let’s look at where I can get Dutch data. The IWSLT 2017 did not seem to have Dutch data <a href="https://wit3.fbk.eu/mt.php?release=2017-01-trnted">at first glance</a> or <a href="https://wit3.fbk.eu/mt.php?release=2017-01-trnmted">here</a>. I also tried just mimicking the adress from facebook <code class="language-plaintext highlighter-rouge">prepare-iwslt17-multilingual.sh</code> (The address <code class="language-plaintext highlighter-rouge">https://wit3.fbk.eu/archive/2017-01-trnted/texts/de/en/de-en.tgz</code> so I simply tried if <code class="language-plaintext highlighter-rouge">https://wit3.fbk.eu/archive/2017-01-trnted/texts/nl/en/nl-en.tgz</code>). Turns out there aren’t.
+<a href="https://www.statmt.org/europarl/">Europarl</a> seemed like a good bet but looking at the data, the langage seems pretty formatted and not very dialogue like. That might explain why it does not seem to be used that often.
+Looking back at IWSLT 2017 finally found the <a href="https://wit3.fbk.eu/mt.php?release=2017-01-mted-test">Dutch data</a> and the <a href="https://wit3.fbk.eu/mt.php?release=2017-01-trnmted">training data</a>. Is it me, or are competitions websites really hard to read ?</p>
+
+<h2 id="the-actual-training-loop">
+<a class="anchor" href="#the-actual-training-loop" aria-hidden="true"><span class="octicon octicon-link"></span></a>The actual training loop</h2>
+
+<p>Ok so let’s reuse the training loop from the german file, so we just need to copy the dutch files in the same layout as the german ones, edit all the scripts and command lines to edit everything. I had to multiply the test files, someone Facebook has tst2011, tst2012 tst2013, tst2014, tst2015 for the german data, which does not seem to exist on the competition website… So here instead of trying to figure out where the information was, I simply copy-pasted the tst2010 file into dummy versions for tst2011…tst2015 (oh yeah simply omitting them will make bash scripts fail because file alignement is a requirement !, and I don’t want to spend more than 5mn editing a bash script).</p>
+
+<p>Now with our edited bash script:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd examples/translation/
+bash prepare-iwslt17-multilingual_nl.sh
+cd ../..
+</code></pre></div></div>
+
+<p>Preprocess dutch data:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>TEXT=examples/translation/iwslt17.nl.en.bpe16k
+fairseq-preprocess --source-lang nl --target-lang en \
+    --trainpref $TEXT/train.bpe.nl-en \
+    --validpref $TEXT/valid0.bpe.nl-en,$TEXT/valid1.bpe.nl-en,$TEXT/valid2.bpe.nl-en,$TEXT/valid3.bpe.nl-en,$TEXT/valid4.bpe.nl-en,$TEXT/valid5.bpe.nl-en \
+    --destdir data-bin/iwslt17.nl_fr.en.bpe16k \
+    --workers 10
+</code></pre></div></div>
+
+<p>Now let’s preprocess french data</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># NOTE: it's important to reuse the en dictionary from the previous step
+fairseq-preprocess --source-lang fr --target-lang en \
+    --trainpref $TEXT/train.bpe.fr-en \
+    --validpref $TEXT/valid0.bpe.fr-en,$TEXT/valid1.bpe.fr-en,$TEXT/valid2.bpe.fr-en,$TEXT/valid3.bpe.fr-en,$TEXT/valid4.bpe.fr-en,$TEXT/valid5.bpe.fr-en \
+    --tgtdict data-bin/iwslt17.nl_fr.en.bpe16k/dict.en.txt \
+    --destdir data-bin/iwslt17.nl_fr.en.bpe16k \
+    --workers 10
+</code></pre></div></div>
+
+<p>Overall, pretty simple task, just a bit bothering to hit all the various walls.</p>
+
+<p>Now that we preformatted the dutch data, we can run the training loop on our own data !</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir -p checkpoints/multilingual_transformer_nl
+CUDA_VISIBLE_DEVICES=0 fairseq-train data-bin/iwslt17.nl_fr.en.bpe16k/ \
+    --max-epoch 50 \
+    --ddp-backend=no_c10d \
+    --task multilingual_translation --lang-pairs nl-en,fr-en \
+    # Don't change the arch !\
+    --arch multilingual_transformer_iwslt_de_en \
+    --share-decoders --share-decoder-input-output-embed \
+    --optimizer adam --adam-betas '(0.9, 0.98)' \
+    --lr 0.0005 --lr-scheduler inverse_sqrt --min-lr '1e-09' \
+    --warmup-updates 4000 --warmup-init-lr '1e-07' \
+    --label-smoothing 0.1 --criterion label_smoothed_cross_entropy \
+    --dropout 0.3 --weight-decay 0.0001 \
+    # Change the checkpoint \
+    --save-dir checkpoints/multilingual_transformer_nl \
+    --max-tokens 4000 \
+    --update-freq 8
+</code></pre></div></div>
+
+<h2 id="checking-the-final-result">
+<a class="anchor" href="#checking-the-final-result" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checking the final result</h2>
+
+<p>So now we have a model <code class="language-plaintext highlighter-rouge">checkpoints/multilingual_transformer_nl/checkpoint_best.pt</code>, let’s run it !</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Generate and score the test set with sacrebleu
+SRC=nl
+sacrebleu --test-set iwslt17 --language-pair ${SRC}-en --echo src \
+    | python scripts/spm_encode.py --model examples/translation/iwslt17.nl_fr.en.bpe16k/sentencepiece.bpe.model \
+    &gt; iwslt17.test.${SRC}-en.${SRC}.bpe
+cat iwslt17.test.${SRC}-en.${SRC}.bpe \
+    | fairseq-interactive data-bin/iwslt17.nl_fr.en.bpe16k/ \
+      --task multilingual_translation --lang-pairs de-en,fr-en \
+      --source-lang ${SRC} --target-lang en \
+      --path checkpoints/multilingual_transformer_nl/checkpoint_best.pt \
+      --buffer-size 2000 --batch-size 128 \
+      --beam 5 --remove-bpe=sentencepiece \
+    &gt; iwslt17.test.${SRC}-en.en.sys
+</code></pre></div></div>
+
+<p>But woops…<code class="language-plaintext highlighter-rouge">sacreBLEU: No such language pair "nl-en" sacreBLEU: Available language pairs for test set "iwslt17": en-fr, fr-en, en-de, de-en, en-zh, zh-en, en-ar, ar-en, en-ja, ja-en, en-ko, ko-en</code></p>
+
+<p>So it looks like we’re going to need to pipe some of our own data into this pipeline, we can just use the validation set we used to train</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat examples/translation/iwslt17.nl_fr.en.bpe16k/valid0.bpe.nl-en.nl |
+python scripts/spm_encode.py --model examples/translation/iwslt17.nl_fr.en.bpe16k/sentencepiece.bpe.model \
+    &gt; iwslt17.test.${SRC}-en.${SRC}.bpe
+</code></pre></div></div>
+
+<p>There we go we have encoded with our multilingual BPE tokenizer our valid dataset. We can now run our translating command</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat iwslt17.test.${SRC}-en.${SRC}.bpe     | fairseq-interactive data-bin/iwslt17.nl_fr.en.bpe16k/       --task multilingual_translation --lang-pairs nl-en,fr-en       --source-lang ${SRC} --target-lang en       --path checkpoints/multilingual_transformer_nl/checkpoint_best.pt       --buffer-size 2000 --batch-size 128       --beam 5 --remove-bpe=sentencepiece
+</code></pre></div></div>
+
+<p>Here are some outputs (not cherry picked):</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">S</span><span class="o">-</span><span class="mi">999</span>   <span class="n">Iedereen</span> <span class="n">heeft</span> <span class="n">een</span> <span class="n">vissenkom</span> <span class="n">nodig</span><span class="py">.
+H</span><span class="o">-</span><span class="mi">999</span>   <span class="o">-</span><span class="mf">1.0272072553634644</span>     <span class="n">Everybody</span> <span class="n">needs</span> <span class="n">a</span> <span class="n">fishing</span> <span class="n">ticket</span><span class="py">.
+D</span><span class="o">-</span><span class="mi">999</span>   <span class="o">-</span><span class="mf">1.0272072553634644</span>     <span class="n">Everybody</span> <span class="n">needs</span> <span class="n">a</span> <span class="n">fishing</span> <span class="n">ticket</span><span class="py">.
+P</span><span class="o">-</span><span class="mi">999</span>   <span class="o">-</span><span class="mf">1.5687</span> <span class="o">-</span><span class="mf">0.2169</span> <span class="o">-</span><span class="mf">0.2363</span> <span class="o">-</span><span class="mf">2.0637</span> <span class="o">-</span><span class="mf">2.6527</span> <span class="o">-</span><span class="mf">0.2981</span> <span class="o">-</span><span class="mf">0.1540</span>
+</code></pre></div></div>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">S</span><span class="o">-</span><span class="mi">998</span>   <span class="n">Het</span> <span class="n">leidt</span> <span class="n">tot</span> <span class="n">meer</span> <span class="n">verlamming</span> <span class="n">en</span> <span class="n">minder</span> <span class="n">tevredenheid</span><span class="py">.
+H</span><span class="o">-</span><span class="mi">998</span>   <span class="o">-</span><span class="mf">0.32848915457725525</span>    <span class="n">It</span> <span class="n">leads</span> <span class="n">to</span> <span class="n">more</span> <span class="n">paralysis</span> <span class="n">and</span> <span class="n">less</span> <span class="n">satisfaction</span><span class="py">.
+D</span><span class="o">-</span><span class="mi">998</span>   <span class="o">-</span><span class="mf">0.32848915457725525</span>    <span class="n">It</span> <span class="n">leads</span> <span class="n">to</span> <span class="n">more</span> <span class="n">paralysis</span> <span class="n">and</span> <span class="n">less</span> <span class="n">satisfaction</span><span class="py">.
+P</span><span class="o">-</span><span class="mi">998</span>   <span class="o">-</span><span class="mf">0.9783</span> <span class="o">-</span><span class="mf">0.3836</span> <span class="o">-</span><span class="mf">0.1854</span> <span class="o">-</span><span class="mf">0.8328</span> <span class="o">-</span><span class="mf">0.1779</span> <span class="o">-</span><span class="mf">0.0163</span> <span class="o">-</span><span class="mf">0.3334</span> <span class="o">-</span><span class="mf">0.3619</span> <span class="o">-</span><span class="mf">0.2152</span> <span class="o">-</span><span class="mf">0.0450</span> <span class="o">-</span><span class="mf">0.2831</span> <span class="o">-</span><span class="mf">0.1289</span>
+</code></pre></div></div>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">S</span><span class="o">-</span><span class="mi">987</span>   <span class="n">Ze</span> <span class="n">maken</span> <span class="n">ons</span> <span class="n">leven</span> <span class="n">minder</span> <span class="n">waard</span><span class="py">.
+H</span><span class="o">-</span><span class="mi">987</span>   <span class="o">-</span><span class="mf">0.5473383665084839</span>     <span class="n">They</span> <span class="n">make</span> <span class="n">our</span> <span class="n">lives</span> <span class="n">worth</span> <span class="n">less</span><span class="py">.
+D</span><span class="o">-</span><span class="mi">987</span>   <span class="o">-</span><span class="mf">0.5473383665084839</span>     <span class="n">They</span> <span class="n">make</span> <span class="n">our</span> <span class="n">lives</span> <span class="n">worth</span> <span class="n">less</span><span class="err">.</span>
+</code></pre></div></div>
+
+<p>Seems good enough for now.</p>
+
+<h2 id="productizing">
+<a class="anchor" href="#productizing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Productizing</h2>
+
+<h3 id="flask-server">
+<a class="anchor" href="#flask-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Flask server</h3>
+
+<p>Ok, in order to productionize, initially I wanted to move away from fairseq, but a lot of logic is actually tied to fairseq-interative (beam search, loading all the args, ensembling the model, source language selection and so on). It’s definitely possible to move out of it, but it felt like a few days job, so much more than I was willing to invest in this particular approach.</p>
+
+<p>So the idea is to have a flask server sitting in front of the model, call the appropriate encoding with spm_encode, pass it to fairseq interactive, and output the D-XXX line back to the caller.</p>
+
+<p>We’re going to containerize it and deploy to Kubernetes (it just happens I have a kubernetes cluster running, so less problems with deploying on it). I considered using ONNX-js (or TFlite) to deploy directly on the browser which saves a lot of headaches on deployment and keeping the service running in the long run (Like I did for the <a href="https://narsil.github.io/assets/face/">glasses</a> project). Here the main problem is the size of the model (600Mo). I could go back and try to optimize but that’s a pretty big model, it’s going to be hard to make it come to a comfortable level for browser-only mode (Again just too much work for what I have in mind here).</p>
+
+<p>So let’s get started from the Flask’s <a href="https://flask.palletsprojects.com/en/1.1.x/quickstart/">hello world</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="o">@</span><span class="n">app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_world</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'Hello, World!'</span>
+</code></pre></div></div>
+
+<p>Let’s edit it a bit to include our translate function.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># TODO later
+</span>    <span class="k">return</span> <span class="s">"This is a translation !"</span>
+
+<span class="o">@</span><span class="n">app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">"POST"</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s">"input"</span><span class="p">]</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"IN {text}"</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">translate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"OUT {output}"</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s">"en"</span><span class="p">:</span> <span class="n">output</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></div>
+
+<p>We can run our example and check it’s running with curl</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl -d input="Ik heft een appel." http://localhost:5000/`
+{"en": "This is a translation !"}
+</code></pre></div></div>
+
+<h3 id="implementing-the-translate-function">
+<a class="anchor" href="#implementing-the-translate-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementing the translate function.</h3>
+
+<p>Ok this is where we are super tied to fairseq-interactive code, I had to dig into the source code, copy most of it, and mainly split <code class="language-plaintext highlighter-rouge">Model loading</code> code from <code class="language-plaintext highlighter-rouge">Model running</code> code. For that I used a lot of globals as the original code does not separate these two concerns (tidying this will be a later goal if it every comes to that).</p>
+
+<p>The final implementation is quite verbose but available <a href="https://github.com/Narsil/translate/blob/master/server/translate.py">here</a>.</p>
+
+<p>One good point about this implementation is that we load the model early, so that it’s available right away when the server comes up (but it does take some time to come up).
+A negative point, is that because it’s loaded eagerly it’s going to make forking a nightmare and basically preventing us from using wsgi efficiently which is the <a href="https://flask.palletsprojects.com/en/1.1.x/deploying/">recommended way of deploying Flask</a>. It’s fine for now, it’s a personnal project after all, to get more stable deployment I would try to remove python from the equation of the web part if possible, it’s really slow and hard to work with on webservers because of the forking/threading nightmare in Python.</p>
+
+<p>So know our backend can really translate !</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl -d input="Ik heft een appel." http://localhost:5000/`
+{"en": "I have an apple."}
+</code></pre></div></div>
+
+<p>Before moving that to the cloud, let’s build a nice interface in front of it</p>
+
+<h3 id="react-front">
+<a class="anchor" href="#react-front" aria-hidden="true"><span class="octicon octicon-link"></span></a>React front</h3>
+
+<p>Ok so we’re going to use React with Typescript. React because we’re going JS anyway to get the translation without clicking a button with a form like html. It’s also more convenient to use Material-UI which I find helps make a website nice from scratch (and I’m tired of Bootstrap). Typescript because it’s just saner than VanillaJS (it won’t make much of a difference here).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yarn create react-app app --template typescript
+cd app
+yarn add @material-ui/core
+</code></pre></div></div>
+
+<p>Let’s edit our App.tsx to use Material-UI and get the initial layout looking like <a href="translate.google.com">translate.google.com</a>.</p>
+
+<div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">makeStyles</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@material-ui/core/styles</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">TextField</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@material-ui/core/TextField</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Card</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@material-ui/core/Card</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Grid</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@material-ui/core/Grid</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">useStyles</span> <span class="o">=</span> <span class="nx">makeStyles</span><span class="p">(</span><span class="nx">theme</span> <span class="o">=&gt;</span> <span class="p">({</span>
+  <span class="na">app</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">display</span><span class="p">:</span> <span class="dl">'</span><span class="s1">flex</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">justifyContent</span><span class="p">:</span> <span class="dl">'</span><span class="s1">center</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">alignItems</span><span class="p">:</span> <span class="dl">'</span><span class="s1">center</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">height</span><span class="p">:</span> <span class="dl">'</span><span class="s1">100vh</span><span class="dl">'</span><span class="p">,</span>
+  <span class="p">},</span>
+<span class="p">}));</span>
+
+<span class="kd">function</span> <span class="nx">App</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">classes</span> <span class="o">=</span> <span class="nx">useStyles</span><span class="p">();</span>
+
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className=</span><span class="si">{</span><span class="nx">classes</span><span class="p">.</span><span class="nx">app</span><span class="si">}</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nc">Card</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+          <span class="p">&lt;</span><span class="nc">Grid</span> <span class="nt">container</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nc">Grid</span> <span class="nt">item</span> <span class="na">xs=</span><span class="si">{</span><span class="mi">12</span><span class="si">}</span> <span class="na">md=</span><span class="si">{</span><span class="mi">6</span><span class="si">}</span><span class="p">&gt;</span>
+              <span class="p">&lt;</span><span class="nc">TextField</span>
+                <span class="na">id=</span><span class="s2">"standard-basic"</span>
+                <span class="na">label=</span><span class="s2">"Dutch"</span>
+                <span class="nt">multiline</span>
+                <span class="nt">autoFocus</span>
+              <span class="p">/&gt;</span>
+            <span class="p">&lt;/</span><span class="nc">Grid</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nc">Grid</span> <span class="nt">item</span> <span class="na">xs=</span><span class="si">{</span><span class="mi">12</span><span class="si">}</span> <span class="na">md=</span><span class="si">{</span><span class="mi">6</span><span class="si">}</span><span class="p">&gt;</span>
+              <span class="p">&lt;</span><span class="nc">TextField</span> <span class="na">id=</span><span class="s2">"standard-basic"</span> <span class="na">label=</span><span class="s2">"English"</span> <span class="nt">multiline</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;/</span><span class="nc">Grid</span><span class="p">&gt;</span>
+          <span class="p">&lt;/</span><span class="nc">Grid</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nc">Card</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">App</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Here is the result : <img src="https://i.imgur.com/ZszCVQU.png" alt=""></p>
+
+<p>Now let’s look at the logic (simplified):</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">type</span> <span class="nx">Timeout</span> <span class="o">=</span> <span class="nx">ReturnType</span><span class="o">&lt;</span><span class="k">typeof</span> <span class="nx">setTimeout</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="p">[</span><span class="nx">text</span><span class="p">,</span> <span class="nx">setText</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="dl">''</span><span class="p">);</span>
+<span class="kd">const</span> <span class="p">[</span><span class="nx">time</span><span class="p">,</span> <span class="nx">setTime</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="o">&lt;</span><span class="nx">Timeout</span> <span class="o">|</span> <span class="kc">null</span><span class="o">&gt;</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">http://localhost:5000</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">translate</span> <span class="o">=</span> <span class="p">(</span><span class="nx">text</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">text</span> <span class="o">===</span> <span class="dl">''</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setText</span><span class="p">(</span><span class="dl">''</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="kd">const</span> <span class="nx">form</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormData</span><span class="p">();</span>
+  <span class="nx">form</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">'</span><span class="s1">input</span><span class="dl">'</span><span class="p">,</span> <span class="nx">text</span><span class="p">);</span>
+  <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">body</span><span class="p">:</span> <span class="nx">form</span><span class="p">,</span>
+  <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">json</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+      <span class="nx">setText</span><span class="p">(</span><span class="nx">json</span><span class="p">[</span><span class="dl">'</span><span class="s1">en</span><span class="dl">'</span><span class="p">]);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>Then call it on the <code class="language-plaintext highlighter-rouge">onChange</code> attribute of our Dutch field.</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onChange</span><span class="o">=</span><span class="p">{</span><span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// We use a timeout handler to prevent very fast keystrokes</span>
+    <span class="c1">// from spamming our server.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">time</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">time</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kd">const</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">translate</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+    <span class="p">},</span> <span class="mi">500</span><span class="p">);</span>
+    <span class="nx">setTime</span><span class="p">(</span><span class="nx">timeout</span><span class="p">);</span>
+<span class="p">}}</span>
+</code></pre></div></div>
+
+<p>There we have it:</p>
+
+<p><img src="https://i.imgur.com/EYZ0EWR.gif" alt=""></p>
+
+<h3 id="lets-dockerize-">
+<a class="anchor" href="#lets-dockerize-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let’s dockerize !</h3>
+
+<p>As I mentionned loading the whole model in the flask app is going to hinder a lot the wsgi process forking. I did try it, try to come up with easy fixes, but ultimately found that keeping the development server was just easier.</p>
+
+<p>Ok so we’re going to need a python docker image, install pytorch, fairseq, and flask to our image (actually we need flask_cors too to make sure we can call from any website as it’s an API.)</p>
+
+<p>As it turns out, fairseq 0.9 had a bug in the training loop and I was using master from a few month ago, and I needed to work with that specific version since there had been breaking changes since in master. That gives us the following <code class="language-plaintext highlighter-rouge">requirements.txt</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>torch
+flask
+flask_cors
+-e git://github.com/pytorch/fairseq.git@7a6519f84fed06947bbf161c7b66c9099bc4ce53#egg=fairseq
+sentencepiece
+</code></pre></div></div>
+
+<p>Now our Docker file, is going to get the python dependencies, copy all the local files (including model and tokenizer file) and run the flask server. That gives us :</p>
+
+<pre><code class="language-Dockerfile">FROM python:3.7-slim
+RUN pip install -U pip
+RUN apt-get update &amp;&amp; apt-get install -y git build-essential # Required for building fairseq from source.
+COPY server/requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+COPY . /app
+WORKDIR /app
+CMD ["python", "translate.py"]
+</code></pre>
+
+<p>Let’s build and check that it works:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t translate:latest .
+docker run -p 5000:5000 translate:latest
+# Now check with curl that we can still hit the docker and get a correct answer
+curl -d input="Ik heft een appel." http://localhost:5000/`
+# {"en": "This is a translation !"}
+</code></pre></div></div>
+
+<h3 id="kubernetes-cluster">
+<a class="anchor" href="#kubernetes-cluster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Kubernetes cluster</h3>
+
+<p>Okay the following part will be pretty specific to my setup. I use a kubernetes cluster on GCP with ingress. I’m going to skip updating the SSL certificate.</p>
+
+<p>Let’s start with pushing the image to GCP:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker tag translate:latest gcr.io/myproject-XXXXXX/translate:1.0
+docker push gcr.io/myproject-XXXXXX/translate:1.0
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+
+</code></pre></div></div>
+
+<p>Here are the (edited for brevity&amp;security) service files I used:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#deployment.yaml</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">translate-deployment</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">translate</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">translate</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">translate</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">gcr.io/myproject-XXXXX/translate:1.0</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># service.yaml</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">translate-service</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">translate</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="m">5000</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#ingress.yaml</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1beta1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ingress-front</span>
+  <span class="na">annotations</span><span class="pi">:</span>
+    <span class="s">kubernetes.io/ingress.global-static-ip-name</span><span class="pi">:</span> <span class="s">address-cluster</span>
+    <span class="s">networking.gke.io/managed-certificates</span><span class="pi">:</span> <span class="s">ottomate-certificate-new</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">translate.ottomate.app</span>
+      <span class="na">http</span><span class="pi">:</span>
+        <span class="na">paths</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/*</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">serviceName</span><span class="pi">:</span> <span class="s">translate-service</span>
+              <span class="na">servicePort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div></div>
+
+<p>Hopefully within a few minutes you have your pod running and you can hit your live own server with the API.</p>
+
+<p>You just need to update your react App to point the the correct URL and boom your done, your very own translate server app.</p>
+
+<h3 id="what-couldshould-be-done-next">
+<a class="anchor" href="#what-couldshould-be-done-next" aria-hidden="true"><span class="octicon octicon-link"></span></a>What could/should be done next.</h3>
+
+<h4 id="for-the-model">
+<a class="anchor" href="#for-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>For the model:</h4>
+
+<ul>
+  <li>Add more data to the original training set, some words are missing, translation can become funky on some real world sentences I give the machine (Dutch companies tend to send very verbose emails)</li>
+  <li>Add some data augmentation in the pool as the current translation is very brittle to errors. Using Sentence piece algorihm with sampling instead of BPE could be used, some typo generator, word inversions to name a few. Training some error detection algorithm on top or using ready made ones could help (translate.google.com has some spellfixing magic applied before it seems.)</li>
+  <li>Making it smaller to make it portable to tflite, mobile phone for offline mode and so on (it’s a pretty big workload to make it work though)</li>
+</ul>
+
+<h4 id="for-the-backend">
+<a class="anchor" href="#for-the-backend" aria-hidden="true"><span class="octicon octicon-link"></span></a>For the backend:</h4>
+
+<ul>
+  <li>Battle testing the backend should be the first thing to do to check failure modes and fix naive DOS attacks.</li>
+  <li>Something like <a href="https://github.com/pytorch/serve">TorchServe</a> seems like what we want for the model part. Never used it so far, but it seems to solve some problems encountered here and would make iterations faster on various models (also swapping out models).</li>
+  <li>On the other spectrum I could go for tighter control. Removing the fairseq-interative clutter would be my first move. If I can go pytorch barebones, then using Rust, with Hugging Face’s <a href="https://github.com/huggingface/tokenizers">tokenizers</a> library would probably make inference faster and deployment easier. It would of course make iteration much slower so I would do that only when the model is very stable. It could make mobile offline possible (with a very large app data, ~1Go, but doable.)</li>
+</ul>
+
+<h4 id="for-the-frontend">
+<a class="anchor" href="#for-the-frontend" aria-hidden="true"><span class="octicon octicon-link"></span></a>For the frontend:</h4>
+
+<ul>
+  <li>Working a bit more on the mobile part of the design which is a bit broken at the moment.</li>
+  <li>Maybe add buttons to switch languages easily, switch language sides (although I mostly use Dutch-&gt;English and Dutch-&gt;French)</li>
+  <li>Add a react-native app so that I can translate from my phone. (Without offline mode)</li>
+</ul>
+
+  </div><a class="u-url" href="/narsil.github.io/ml/nlp/react/2020/07/27/creating-a-translation-app.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/narsil.github.io/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Narsil</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Narsil</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list">
+  <li><a href="https://github.com/Narsil"><svg class="social svg-icon"><use xlink:href="/narsil.github.io/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Narsil</span></a></li><li><a href="https://www.twitter.com/narsilou"><svg class="social svg-icon"><use xlink:href="/narsil.github.io/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">narsilou</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Small experiements insights from ML and software development.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
