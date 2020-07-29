@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Deploying a snapshat filter to the browser | Narsil</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Deploying a snapshat filter to the browser" />
+<meta name="author" content="nicolas" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to deploy a ML model without worrying about a cloud pipeline." />
+<meta property="og:description" content="How to deploy a ML model without worrying about a cloud pipeline." />
+<link rel="canonical" href="https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html" />
+<meta property="og:url" content="https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html" />
+<meta property="og:site_name" content="Narsil" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-29T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html","@type":"BlogPosting","headline":"Deploying a snapshat filter to the browser","dateModified":"2020-07-29T00:00:00-05:00","datePublished":"2020-07-29T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html"},"author":{"@type":"Person","name":"nicolas"},"description":"How to deploy a ML model without worrying about a cloud pipeline.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://narsil.github.io/feed.xml" title="Narsil" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+          ]}
+        );
+      });
+    </script>
+  
+
+  <script>
+  function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+  }
+  window.onload = wrap_img;
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+      // add link icon to anchor tags
+      var elem = document.querySelectorAll(".anchor-link")
+      elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+      // remove paragraph tags in rendered toc (happens from notebooks)
+      var toctags = document.querySelectorAll(".toc-entry")
+      toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+  </script>
+</head><body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Narsil</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Me</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Deploying a snapshat filter to the browser</h1><p class="page-description">How to deploy a ML model without worrying about a cloud pipeline.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-29T00:00:00-05:00" itemprop="datePublished">
+        Jul 29, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">nicolas</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#deploying-a-cool-deep-learning-demo-at-zero-cost">Deploying a cool deep learning demo at zero cost.</a></li>
+<li class="toc-entry toc-h2"><a href="#background">Background</a></li>
+<li class="toc-entry toc-h2"><a href="#lets-get-started-with-3ddfa">Let’s get started with 3DDFA</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#how-does-it-work-">How does it work ?</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#lets-port-the-model-to-the-browser">Let’s port the model to the browser.</a></li>
+<li class="toc-entry toc-h2"><a href="#putting-that-model-in-an-actual-demo-product">Putting that model in an actual demo product.</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#get-the-webcam-data">Get the webcam data</a></li>
+<li class="toc-entry toc-h3"><a href="#get-the-3d-faces-from-the-image">Get the 3d faces from the image</a></li>
+<li class="toc-entry toc-h3"><a href="#reconstruct-the-vertices">Reconstruct the vertices.</a></li>
+<li class="toc-entry toc-h3"><a href="#add-glasses-on-that-model">Add glasses on that model.</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#conclusion">Conclusion</a></li>
+</ul><blockquote>
+  <p>TL;DR In this article I explain how you can deploy a model directly to the browser from pytorch by using Onnjx. This work was done a year ago in about two weeks time.</p>
+</blockquote>
+
+<p><img src="/assets/images/face/face.gif" alt=""></p>
+<div style="width:100%;text-align:center;">
+    <a href="https://narsil.github.io/assets/face/">Check out the full demo</a>.
+</div>
+
+<h2 id="deploying-a-cool-deep-learning-demo-at-zero-cost">
+<a class="anchor" href="#deploying-a-cool-deep-learning-demo-at-zero-cost" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deploying a cool deep learning demo at zero cost.</h2>
+
+<p>Ok, so when we are showcasing deep learning, usually that implies running models somewhere on the cloud. Sometimes, running these models is by itself quite costly. GPT-3 cost something like 10 million to train, but imagine how much it will cost to <em>run</em> if it was accessible to the general public !</p>
+
+<p>One technique applicable so small machine learning models, it to actually make to client run the model not you. This means that your front can be a simple static website. Hell you could even host it on Github for free !</p>
+
+<h2 id="background">
+<a class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h2>
+
+<p>About a year ago, I was working at <a href="https://nabla.com">Nabla</a> (They pivoted since). We were looking
+at how performant was 3d pose estimation of the face. It means models detecting
+faces <em>with</em> depth which was not as ubiquitous as regular 2d face detection.</p>
+
+<p>The idea was to see how hard it was to fit glasses on the fly to customers.
+The whole thing lasted for 2 weeks, so mind the lack of polish.</p>
+
+<h2 id="lets-get-started-with-3ddfa">
+<a class="anchor" href="#lets-get-started-with-3ddfa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let’s get started with 3DDFA</h2>
+
+<p>So <a href="https://github.com/cleardusk/3DDFA">3DDFA</a> is an improved Pytorch implementation of <a href="https://arxiv.org/abs/1804.01005">this paper</a>.
+We settled on that implementation because it was the best available at the time.</p>
+
+<h3 id="how-does-it-work-">
+<a class="anchor" href="#how-does-it-work-" aria-hidden="true"><span class="octicon octicon-link"></span></a>How does it work ?</h3>
+
+<p>Most 3d pose estimation use the same tricks. First you need a good space representation with few latent variables.
+That is usually taken by creating a quite large dataset of a lot of people in lots of different poses and doing a
+very large PCA on this representation.</p>
+
+<p>For faces, 3ddfa uses a mix of <a href="https://faces.dmi.unibas.ch/bfm/">BFM</a> and <a href="http://kunzhou.net/2012/facewarehouse-tr.pdf">Facewarehouse</a>, for the full human body, <a href="https://smpl.is.tue.mpg.de/">SMPL</a> is often used.</p>
+
+<p>In the face case, all 3D scans register the same 53490 vertices on the difference faces of the different participants (100 male and 100 female for BFM). For instance the center nose vertex:</p>
+
+<p><img src="/assets/images/face/bfm-vertex.png" alt=""></p>
+
+<p>Then we have the same participants, with different expressions:</p>
+
+<p><img src="/assets/images/face/shape_expression_matrix.png" alt=""></p>
+
+<p>Overall we end up with 150 participants x 20 poses x 53490 vertices (3 reals). We can then use a PCA to reduce the dimensionality into 2 orthogonal spaces, one for the <strong>shape</strong> and the other for the <strong>expression</strong> of a face. Such that any face can be expressed as.</p>
+
+<script type="math/tex; mode=display">M_{target\ face} = N_{neutral\ face} + \underbrace{S_{params} * S_{shape}}_{\text{Person identity}} + \underbrace{W_{params} * W_{expression}}_{\text{Smile or neutral expression}}</script>
+
+<p>Actually we’re missing a global orientation of the face which can be represented as a rotation matrix and a scaling factor and an offset, which we will just express as a single matrix $ R $, and a vector $ p $.</p>
+
+<script type="math/tex; mode=display">M_{target\ face} = R \times ( N_{neutral\ face} + S_{params} * S_{shape} + W_{params} * W_{expression}) + p</script>
+
+<p>The 3DDFA model, will actually predict from a photo $ R $, $S_{params}$, $W_{params}$ and $p$. For reference, R is 9 floats, $S_{params}$ is 40 floats, $W_{params}$ is 10 floats, and $p$ is 3 floats. So the actual model of 3DDFA takes a 120x120 pixels image and returns a 62 vector that represents the face.</p>
+
+<p><img src="/assets/images/face/full-model.png" alt=""></p>
+
+<p>The actual architecture of 3ddfa is actually just a simple mobile net.</p>
+
+<h2 id="lets-port-the-model-to-the-browser">
+<a class="anchor" href="#lets-port-the-model-to-the-browser" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let’s port the model to the browser.</h2>
+
+<p>Ok, so let’s isolate the first few lines in <code class="language-plaintext highlighter-rouge">main.py</code> that load the model.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">mobilenet_v1</span>
+
+<span class="c1"># 1. load pre-tained model                                                    
+</span><span class="n">checkpoint_fp</span> <span class="o">=</span> <span class="s">'models/phase1_wpdc_vdc.pth.tar'</span>                              
+<span class="n">arch</span> <span class="o">=</span> <span class="s">'mobilenet_1'</span>                                                          
+                                                                              
+<span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">checkpoint_fp</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="k">lambda</span> <span class="n">storage</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="n">storage</span><span class="p">)[</span><span class="s">'state_dict'</span><span class="p">]</span>
+<span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mobilenet_v1</span><span class="p">,</span> <span class="n">arch</span><span class="p">)(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">62</span><span class="p">)</span>  <span class="c1"># 62 = 12(pose) + 40(shape) +10(expression)
+</span>                                                                              
+<span class="n">model_dict</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>                                               
+<span class="c1"># because the model is trained by multiple gpus, prefix module should be removed
+</span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>                                                   
+    <span class="n">model_dict</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'module.'</span><span class="p">,</span> <span class="s">''</span><span class="p">)]</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>                      
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_dict</span><span class="p">)</span>        
+</code></pre></div></div>
+
+<p>Now let’s add a few lines to <a href="https://pytorch.org/docs/stable/onnx.html">export the model to Onnx</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Batch size, C, H, W
+</span><span class="n">dummy_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="p">)</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">onnx</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dummy_input</span><span class="p">,</span> <span class="s">"3ddfa.onnx"</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">input_names</span><span class="o">=</span><span class="p">[</span><span class="s">"input"</span><span class="p">],</span> <span class="n">output_names</span><span class="o">=</span><span class="p">[</span><span class="s">"params"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>Ok good, now we have a <code class="language-plaintext highlighter-rouge">3ddfa.onnx</code> file model in our directory.</p>
+
+<p>Let’s try to run it in the browser by following <a href="https://github.com/microsoft/onnxjs">OnnxJS</a> Getting Started and write a <code class="language-plaintext highlighter-rouge">index.html</code> file:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span> <span class="nt">&lt;/head&gt;</span>
+
+  <span class="nt">&lt;body&gt;</span>
+    <span class="c">&lt;!-- Load ONNX.js --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="c">&lt;!-- Code that consume ONNX.js --&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+      <span class="c1">// create a session</span>
+      <span class="kd">const</span> <span class="nx">myOnnxSession</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">onnx</span><span class="p">.</span><span class="nx">InferenceSession</span><span class="p">();</span>
+      <span class="c1">// load the ONNX model file</span>
+
+      <span class="kd">function</span> <span class="nx">getInputs</span><span class="p">(){</span>
+          <span class="kd">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Float32Array</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">120</span> <span class="o">*</span> <span class="mi">120</span><span class="p">).</span><span class="nx">fill</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+          <span class="kd">const</span> <span class="nx">tensorX</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">onnx</span><span class="p">.</span><span class="nx">Tensor</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="dl">'</span><span class="s1">float32</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">]);</span>
+          <span class="k">return</span> <span class="p">[</span><span class="nx">tensorX</span><span class="p">];</span>
+      <span class="p">}</span>
+
+      <span class="nx">myOnnxSession</span><span class="p">.</span><span class="nx">loadModel</span><span class="p">(</span><span class="dl">"</span><span class="s2">./3ddfa.onnx</span><span class="dl">"</span><span class="p">).</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// generate model input</span>
+        <span class="kd">const</span> <span class="nx">inferenceInputs</span> <span class="o">=</span> <span class="nx">getInputs</span><span class="p">();</span>
+        <span class="c1">// execute the model</span>
+        <span class="nx">myOnnxSession</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">inferenceInputs</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">output</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="c1">// consume the output</span>
+          <span class="kd">const</span> <span class="nx">outputTensor</span> <span class="o">=</span> <span class="nx">output</span><span class="p">.</span><span class="nx">values</span><span class="p">().</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">;</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`model output tensor: </span><span class="p">${</span><span class="nx">outputTensor</span><span class="p">}</span><span class="s2">.`</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>Now let’s run a local server with <code class="language-plaintext highlighter-rouge">python -m http.server</code> and go to <code class="language-plaintext highlighter-rouge">http://localhost:8000</code> to see your console.
+Woops ! We got an error : <code class="language-plaintext highlighter-rouge">Uncaught (in promise) TypeError: cannot resolve operator 'Shape' with opsets: ai.onnx v9</code>.</p>
+
+<p>Actually onnx.js cannot infer dynamic shapes the same way PyTorch can. We can edit that by hardcoding
+some values within a <code class="language-plaintext highlighter-rouge">Reshape</code> (which <em>is</em> supported).</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">mobilenet_v1.py</code>  line 144, edit <code class="language-plaintext highlighter-rouge">x = x.view(x.shape(0), -1)</code> into <code class="language-plaintext highlighter-rouge">x.view(1, 1024)</code>. Now re-export your onnx file.</p>
+
+<p>It’s working ! (Well we have values.)</p>
+
+<h2 id="putting-that-model-in-an-actual-demo-product">
+<a class="anchor" href="#putting-that-model-in-an-actual-demo-product" aria-hidden="true"><span class="octicon octicon-link"></span></a>Putting that model in an actual demo product.</h2>
+
+<p>Ok so this is a bit more intensive work, so we’re not going to detail every part, but focus on the most important parts.</p>
+
+<h3 id="get-the-webcam-data">
+<a class="anchor" href="#get-the-webcam-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Get the webcam data</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span><span class="na">video</span><span class="p">:</span> <span class="p">{</span><span class="na">facingMode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">user</span><span class="dl">'</span><span class="p">}})</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">video</span><span class="p">.</span><span class="nx">srcObject</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">video</span><span class="p">.</span><span class="nx">play</span><span class="p">().</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="c1">// That draws the video on a canvas.</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">facedetector</span><span class="p">.</span><span class="nx">loadModel</span><span class="p">()</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">loop</span><span class="p">()</span>
+            <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">Error launching webcam </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">e</span><span class="p">)</span>
+            <span class="p">});</span>
+
+    <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+        <span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">No webcam detected </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="get-the-3d-faces-from-the-image">
+<a class="anchor" href="#get-the-3d-faces-from-the-image" aria-hidden="true"><span class="octicon octicon-link"></span></a>Get the 3d faces from the image</h3>
+
+<p>We’re using <a href="https://github.com/justadudewhohacks/face-api.js">face detector</a> to get where the faces are on the current image, then run our model on each face in the image.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">outcanvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">2d</span><span class="dl">'</span><span class="p">)</span><span class="o">!</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">detections</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">faceapi</span><span class="p">.</span><span class="nx">detectAllFaces</span><span class="p">(</span>
+  <span class="nx">incanvas</span><span class="p">,</span>
+  <span class="k">new</span> <span class="nx">faceapi</span><span class="p">.</span><span class="nx">TinyFaceDetectorOptions</span><span class="p">(),</span>
+<span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">vertices</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">detections</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">detection</span> <span class="o">=</span> <span class="nx">detections</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+  <span class="c1">// We get a 1x3x120x120 Tensor here.</span>
+  <span class="c1">// We could batch that in theory, but simplicity here.</span>
+  <span class="kd">const</span> <span class="nx">inferenceInputs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInputs</span><span class="p">(</span><span class="nx">incanvas</span><span class="p">,</span> <span class="nx">detection</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">outputData</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="o">!</span><span class="p">.</span><span class="nx">run</span><span class="p">([</span><span class="nx">inferenceInputs</span><span class="p">]);</span>
+  <span class="kd">const</span> <span class="nx">output</span> <span class="o">=</span> <span class="nx">outputData</span><span class="p">.</span><span class="nx">values</span><span class="p">().</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">;</span>
+
+  <span class="c1">// We need a reconstruction.</span>
+  <span class="kd">const</span> <span class="nx">face_vertices</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reconstruct68</span><span class="p">(</span><span class="nx">output</span><span class="p">);</span>
+  
+  <span class="c1">// Ellipsed code where we fuse various meshes to only run a single rotation</span>
+  <span class="c1">// and render process (we need to render to occlude the glasses in 3d with</span>
+  <span class="c1">// a transparent mesh of the face.</span>
+<span class="p">}</span>
+
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">incanvas</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="c1">// Drawing back the occluded glasses on the webcam canvas.</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">drawGlasses</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">scene</span><span class="p">,</span> <span class="nx">outcanvas</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="reconstruct-the-vertices">
+<a class="anchor" href="#reconstruct-the-vertices" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reconstruct the vertices.</h3>
+
+<p>As it turns out the Rotation ($R$) + Offset ($p$) we’ve seen in the first part is not really what it seems, $R$ is just a 3x3 matrix, nothing forces it to be rotation (meaning determinant 1). As it turns out the model, changes the determinant of this matrix quite heavily throughout time. Using it as is within our demo, would mean that glasses would grow large, then small and get deformed all the time.</p>
+
+<p>In order to fix this, we could fix the model of course, but it would require recreating a dataset, changing the loss functions and so on. But that’s at least a full week to run that, and nothing guarantees that it would work. It could still fail because the morphable model lacks expressability, or you can’t recreate the dataset because of some other issues and so on. That’s of course the best course of action for a full featured product. But it won’t ship fast.</p>
+
+<p>A much easier way is to recover the real rotation, scale and offset by running a small gradient descent loop locally, we know they exist because a real face does <em>not</em> change scale across time, rotation and offset tend to get small changes frame to frame.</p>
+
+<p>So what we’re going to do, is reconstruct 68 vertices from the faces from the model. (we need more that 3 to stabilise the solution, 53k is way overboard) and <code class="language-plaintext highlighter-rouge">solve</code> the equation <script type="math/tex">\text{face vertices} = R \times s \times \text{glass vertices} + p</script>.</p>
+
+<p>That’s 13 params (9 + 1 + 3) for 68 equations. Inverting that system is not very practical as far as I know in javasript, so we’re going to simply run a gradient descent. It should be faster than inversion on subsequent updates (when the solution is close to the previous solution).</p>
+
+<p>The full <a href="https://github.com/Narsil/face/blob/master/src/solver.ts">code</a> is a bit scary looking (definitely not the way I would solve this now) but mostly amounts to manually working the gradient steps.</p>
+
+<h3 id="add-glasses-on-that-model">
+<a class="anchor" href="#add-glasses-on-that-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add glasses on that model.</h3>
+
+<p>If we added the glasses mesh right away, we would have an occlusion problem where the back branch would show on top of your face. What we’re going to do is to have a grouped mesh of the glasses <em>and</em> a transparent face (we’ll use a mean normal face to keep computation low) so that the 3d rendering will occlude the back branch of the glasses.</p>
+
+<p>Adding the general face:</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="nx">add_face</span><span class="p">(</span><span class="nx">transparent</span><span class="p">?:</span> <span class="nx">boolean</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">transparent</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">transparent</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="kd">const</span> <span class="nb">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">scene</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PUBLIC_URL</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">/3dmodels/face.fbx</span><span class="dl">'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">face</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">transparent</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">mesh</span> <span class="o">=</span> <span class="nx">face</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">Mesh</span><span class="p">;</span>
+      <span class="nx">mesh</span><span class="p">.</span><span class="nx">renderOrder</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+      <span class="kd">const</span> <span class="nx">material</span> <span class="o">=</span> <span class="nx">mesh</span><span class="p">.</span><span class="nx">material</span> <span class="k">as</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">Material</span><span class="p">;</span>
+  
+      <span class="c1">// Makes the face occluding, but we write the background</span>
+      <span class="c1">// Color, so alpha instead of texture.</span>
+      <span class="nx">material</span><span class="p">.</span><span class="nx">colorWrite</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">face</span><span class="p">);</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nx">reset_clones</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Adding the glasses</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="nx">addElement</span><span class="p">(</span><span class="nx">element</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">group</span><span class="p">.</span><span class="nx">add_element</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PUBLIC_URL</span> <span class="o">+</span> <span class="s2">`/3dmodels/</span><span class="p">${</span><span class="nx">element</span><span class="p">}</span><span class="s2">.fbx`</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The whole pipeline is a bit complex to reuse meshes and run the thing efficiently (still pretty messy code) but that’s the gist, add the 2 meshes on the same scene, and hit render. Actually, we add all the faces and all the glasses to the same global scene and render only once.</p>
+
+<h2 id="conclusion">
+<a class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h2>
+
+<p>So we’ve seen how we put a model from a working paper code, into an actual product.
+It necessary to remember to understand how the paper actually works vs pretends to work
+is important, it was super important here to understand the $R$ and $p$ and $s$ factors into
+our reconstruction. It also demonstrates that the paper’s authors didn’t realize that what they thought
+was a pose actually contains <em>a lot</em> of distortion, so it does not work how they expected.</p>
+
+<p>It also shows that putting ML in a product even for a very simple demo requires understanding
+many other technologies. Here it meant getting the webcam feed, getting Onnx layers simplfied, understanding <a href="https://threejs.org/">Three.js</a> to master occlusion, etc… But by going full browser you can put your demo out and never worry about the cost !</p>
+
+<p>Check out the <a href="https://github.com/Narsil/face">Full source code</a> for all the quirks.</p>
+
+  </div><a class="u-url" href="/2020/07/29/deploying-model-in-the-browser.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Narsil</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Narsil</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list">
+  <li><a href="https://github.com/Narsil"><svg class="social svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Narsil</span></a></li><li><a href="https://www.twitter.com/narsilou"><svg class="social svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">narsilou</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Small experiements insights from ML and software development.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
