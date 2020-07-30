@@ -11,6 +11,7 @@ description: Small experiments insights from ML and software development.
 github_username: Narsil
 # you can comment the below line out if your repo name is not different than your baseurl
 github_repo: "narsil.github.io"
+repository: "Narsil/narsil.github.io"
 
 # OPTIONAL: override baseurl and url if using a custom domain
 url: "https://narsil.github.io" # the base hostname & protocol for your site, e.g. http://example.com
