@@ -49,14 +49,14 @@ exclude:
 # Everything below here should be left alone. Modifications may break fastpages
 theme: minima
 plugins:
-  - jekyll-feed
-  - jekyll-gist
+  # - jekyll-feed
+  # - jekyll-gist
   - jekyll-octicons
-  - jekyll-github-metadata
+    # - jekyll-github-metadata
   - jekyll-toc
   - jekyll-twitter-plugin
   - jekyll-relative-links
-  - jekyll-seo-tag
+    # - jekyll-seo-tag
 
 titles_from_headings:
   enabled:     true

@@ -2,7 +2,7 @@
 layout: post
 title: 'Running a docker with GPU enabled (for pytorch and tensorflow)'
 author: nicolas
-categories: [ml, docker]
+tags: [ml, docker]
 ---
 
 Sometimes if you want to contain dependencies you might want to use docker
