@@ -3,7 +3,7 @@ layout: post
 title: A non-NLP application of Word2Vec
 author: nicolas
 toc: true
-description: Going beyond transformers
+description: Applying Word2Vec to math exam questions.
 tags:
   - ml
   - tokenizerless

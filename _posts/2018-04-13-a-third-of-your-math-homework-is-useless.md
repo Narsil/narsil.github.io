@@ -4,7 +4,7 @@ layout: post
 title: A third of your math homework is useless
 author: nicolas
 toc: true
-description: 
+description: AI predicts confidently how students will do.
 tags:
   - ml
   - precision
