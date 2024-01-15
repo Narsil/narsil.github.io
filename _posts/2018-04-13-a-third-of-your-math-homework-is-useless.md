@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: A third of your math homework is useless
