@@ -30,7 +30,7 @@ The results were obtained using an AdaBoost regression, on manually crafted feat
 
 Now the results. First, we get an AUC score of 0.89. Unfortunately, we don’t have an expert reference (different teachers estimating success likelihood of students). Not having comparison points makes it really hard to evaluate if this score is interesting or not. We can only compare to previous versions of our algorithms, which started with AUC 0.72 so we definitely improved our assessment of students, you can read our other articles for details on our algorithms and how we assess them.
 
-![](/assets/images/a-third1.png)
+![](/assets/images/a-third-1.png)
 Area Under Curve of our predictions (Prediction data was evaluated in real time)
 
 Out of the 1 Million exercises we assessed, we estimated on 300k exercises that the student would succeed over 95% of the times. They succeeded on average over 96% of the time. In other words,  our algorithm was able to predict that you knew how to do this exercise a third of the time. **If this is so, was it really necessary for you to do it ?** The temptation to answer no is exactly the problem that AI poses to us, humans.
@@ -41,7 +41,7 @@ But in the end, it means that we roughly know a student’s result in advance on
 
 Overall you can see how precise is our algorithm on the following graph
 
-![](/assets/images/a-third2.png)
+![](/assets/images/a-third-2.png)
 
 Each dot is a group of predictions. The closer the dots are to the blue line, the better the prediction was for that group. The two big dots at each end are the one mentioned in this article.
 
