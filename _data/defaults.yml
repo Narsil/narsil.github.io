@@ -1,0 +1,10 @@
+# Default frontmatter for all posts
+defaults:
+  - scope:
+      path: "_posts"
+      type: "posts"
+    values:
+      twitter:
+        card: summary_large_image
+      og:
+        type: article 

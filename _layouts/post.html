@@ -1,6 +1,18 @@
 ---
 layout: default
 ---
+{%- comment -%}
+Extract first image from content if no image is specified in frontmatter
+{%- endcomment -%}
+{%- if page.image == nil -%}
+  {%- assign first_image = content | split: '<img' | last | split: 'src="' | last | split: '"' | first -%}
+  {%- if first_image -%}
+    {%- assign page.image = first_image -%}
+    {%- assign page.twitter.image = first_image -%}
+    {%- assign page.og.image = first_image -%}
+  {%- endif -%}
+{%- endif -%}
+
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
