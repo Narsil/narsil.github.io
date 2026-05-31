@@ -13,11 +13,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install Zola
+        uses: taiki-e/install-action@v2
+        with:
+          tool: zola@0.22.1
+
       - name: Build site
-        uses: shalzz/zola-deploy-action@v0.20.0
-        env:
-          BUILD_ONLY: true
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: zola build
 
       - name: Flatten slug.html/index.html -> slug.html (match Jekyll permalinks)
         run: bash scripts/flatten-html.sh public
