@@ -2,7 +2,8 @@
 title = "A non-NLP application of Word2Vec"
 date = 2017-07-31
 description = "Applying Word2Vec to math exam questions."
-path = "/2017/07/31/a-non-nlp-application-of-word2vec.html"
+path = "/2017/07/31/a-non-nlp-application-of-word2vec/"
+aliases = ["/2017/07/31/a-non-nlp-application-of-word2vec.html"]
 [taxonomies]
 tags = ["ml", "tokenizerless", "mamba"]
 [extra]

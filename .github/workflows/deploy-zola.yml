@@ -33,9 +33,6 @@ jobs:
       - name: Build site
         run: zola build
 
-      - name: Flatten slug.html/index.html -> slug.html (match Jekyll permalinks)
-        run: bash scripts/flatten-html.sh public
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

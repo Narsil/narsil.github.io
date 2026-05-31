@@ -1,14 +1,15 @@
 +++
 title = "Model based encodings (2)"
 date = 2019-06-06
-path = "/2019/06/06/model-based-bpe-encodings-2.html"
+path = "/2019/06/06/model-based-bpe-encodings-2/"
+aliases = ["/2019/06/06/model-based-bpe-encodings-2.html"]
 [taxonomies]
 tags = ["ml", "nlp"]
 [extra]
 author = "nicolas"
 +++
 
-In the [first segment](/2019/05/16/model-based-bpe-encodings.html)
+In the [first segment](/2019/05/16/model-based-bpe-encodings/)
 we looked into how we could make a BPE
 based encoding, not only based on frequency in the dataset, but directly on the
 model probability measure of the next token. In that article I mention that
@@ -31,7 +32,7 @@ To something that has less elements :
 
 In one sentence, BPE fuses bytes to form tokens based on frequency in the full
 dataset. For a more detailed example, look that [the previous
-article](/2019/05/16/model-based-bpe-encodings.html).
+article](/2019/05/16/model-based-bpe-encodings/).
 In this example, you can see there is always a split after a space. That’s a
 limitation of BPE so actually our target might look different, maybe more like
 

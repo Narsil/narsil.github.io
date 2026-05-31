@@ -2,7 +2,8 @@
 title = "A third of your math homework is useless"
 date = 2018-04-13
 description = "AI predicts confidently how students will do."
-path = "/2018/04/13/a-third-of-your-math-homework-is-useless.html"
+path = "/2018/04/13/a-third-of-your-math-homework-is-useless/"
+aliases = ["/2018/04/13/a-third-of-your-math-homework-is-useless.html"]
 [taxonomies]
 tags = ["ml", "precision", "roc"]
 [extra]

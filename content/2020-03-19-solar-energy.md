@@ -2,7 +2,8 @@
 title = "Super simple estimation of available solar energy"
 date = 2020-03-19
 description = "How much energy is actually renewable and humanity's cap in consumption"
-path = "/energy/2020/03/19/solar-energy.html"
+path = "/energy/2020/03/19/solar-energy/"
+aliases = ["/energy/2020/03/19/solar-energy.html"]
 [taxonomies]
 categories = ["energy"]
 [extra]

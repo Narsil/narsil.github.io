@@ -2,7 +2,8 @@
 title = "Self KL-divergence for detecting out of distribution data and unsupervised text classification"
 date = 2020-02-26
 description = "Running two models alongside each other for trivial out of distribution detection in production models and side bonus is getting unsupervised text classification"
-path = "/2020/02/26/self-kl-models.html"
+path = "/2020/02/26/self-kl-models/"
+aliases = ["/2020/02/26/self-kl-models.html"]
 [taxonomies]
 tags = ["ml", "nlp", "kldivergence"]
 [extra]

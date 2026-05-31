@@ -2,7 +2,8 @@
 title = "Model based encodings"
 date = 2019-05-16
 description = "How to use BPE without this hardcoded algorithm"
-path = "/2019/05/16/model-based-bpe-encodings.html"
+path = "/2019/05/16/model-based-bpe-encodings/"
+aliases = ["/2019/05/16/model-based-bpe-encodings.html"]
 [taxonomies]
 tags = ["ml", "nlp"]
 [extra]

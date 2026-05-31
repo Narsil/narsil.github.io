@@ -2,7 +2,8 @@
 title = "Creating a translation app"
 date = 2020-07-27
 description = "How to create a custom clone of translate.google.com"
-path = "/ml/nlp/react/2020/07/27/creating-a-translation-app.html"
+path = "/ml/nlp/react/2020/07/27/creating-a-translation-app/"
+aliases = ["/ml/nlp/react/2020/07/27/creating-a-translation-app.html"]
 [taxonomies]
 categories = ["ml", "nlp", "react"]
 [extra]

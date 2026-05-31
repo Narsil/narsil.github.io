@@ -2,7 +2,8 @@
 title = "Deploying a snapshat filter to the browser"
 date = 2020-07-29
 description = "How to deploy a ML model without worrying about a cloud pipeline."
-path = "/2020/07/29/deploying-model-in-the-browser.html"
+path = "/2020/07/29/deploying-model-in-the-browser/"
+aliases = ["/2020/07/29/deploying-model-in-the-browser.html"]
 [taxonomies]
 tags = ["ml", "onnjx", "browser"]
 [extra]

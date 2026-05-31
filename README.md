@@ -19,13 +19,14 @@ templates/             Site-level template overrides (extend the pickles theme)
 sass/custom.scss       Custom styles, including dark-mode overrides
 static/                Files served verbatim at the site root (assets/, images/, CNAME, 404.html)
 themes/zola-pickles    Theme submodule
-scripts/               Build helpers (flatten-html.sh, generate_llm_bottlenecks_diagram.py)
-.github/workflows/     CI: builds with Zola, flattens slug.html dirs, deploys to gh-pages
+scripts/               Content helpers (e.g. generate_llm_bottlenecks_diagram.py)
+.github/workflows/     CI: builds with Zola, deploys via actions/deploy-pages
 ```
 
 ## Deployment
 
-Pushing to `master` triggers `.github/workflows/deploy-zola.yml`, which builds the
-site, flattens `slug.html/index.html` files to flat `slug.html` (matching the legacy
-Jekyll permalink layout), and publishes `public/` to the `gh-pages` branch served at
-`nodata.dev`.
+Pushing to `master` triggers `.github/workflows/deploy-zola.yml`: install Zola,
+`zola build`, upload `public/` as a Pages artifact, and deploy via
+`actions/deploy-pages`. Old Jekyll permalinks (`/YYYY/MM/DD/slug.html`) keep
+resolving because each post declares them as `aliases` — Zola emits a meta-refresh
+redirect HTML at each alias path.

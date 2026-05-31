@@ -1,7 +1,8 @@
 +++
 title = "Beyond Distributed Compilation: A New Paradigm for Heterogeneous Computing"
 date = 2025-06-04
-path = "/compilers/distributed-systems/gpu/2025/06/04/beyond-distributed-compilation.html"
+path = "/compilers/distributed-systems/gpu/2025/06/04/beyond-distributed-compilation/"
+aliases = ["/compilers/distributed-systems/gpu/2025/06/04/beyond-distributed-compilation.html"]
 [taxonomies]
 tags = ["compilers", "distributed-systems", "gpu", "heterogeneous-computing"]
 categories = ["compilers", "distributed-systems", "gpu"]

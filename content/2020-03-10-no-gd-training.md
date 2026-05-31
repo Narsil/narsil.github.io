@@ -2,7 +2,8 @@
 title = "Can we train neural networks without gradient descent ?"
 date = 2020-03-10
 description = "If the lottery ticket hypothesis is real, does that mean we can train a neural network without gradient descent?"
-path = "/ml/2020/03/10/no-gd-training.html"
+path = "/ml/2020/03/10/no-gd-training/"
+aliases = ["/ml/2020/03/10/no-gd-training.html"]
 [taxonomies]
 categories = ["ml"]
 [extra]

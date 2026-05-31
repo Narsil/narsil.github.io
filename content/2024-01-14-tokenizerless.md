@@ -2,7 +2,8 @@
 title = "All we need is tokenizerless"
 date = 2024-01-14
 description = "Going beyond transformers"
-path = "/2024/01/14/tokenizerless.html"
+path = "/2024/01/14/tokenizerless/"
+aliases = ["/2024/01/14/tokenizerless.html"]
 [taxonomies]
 tags = ["ml", "tokenizerless", "mamba"]
 [extra]

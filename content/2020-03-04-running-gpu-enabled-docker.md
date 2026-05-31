@@ -1,7 +1,8 @@
 +++
 title = "Running a docker with GPU enabled (for pytorch and tensorflow)"
 date = 2020-03-04
-path = "/2020/03/04/running-gpu-enabled-docker.html"
+path = "/2020/03/04/running-gpu-enabled-docker/"
+aliases = ["/2020/03/04/running-gpu-enabled-docker.html"]
 [taxonomies]
 tags = ["ml", "docker"]
 [extra]
