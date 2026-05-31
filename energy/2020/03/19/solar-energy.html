@@ -1,662 +1,416 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Super simple estimation of available solar energy | Narsil</title>
-<meta name="generator" content="Jekyll v4.1.1" />
-<meta property="og:title" content="Super simple estimation of available solar energy" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="How much energy is actually renewable and humanity’s cap in consumption" />
-<meta property="og:description" content="How much energy is actually renewable and humanity’s cap in consumption" />
-<link rel="canonical" href="https://narsil.github.io/energy/2020/03/19/solar-energy.html" />
-<meta property="og:url" content="https://narsil.github.io/energy/2020/03/19/solar-energy.html" />
-<meta property="og:site_name" content="Narsil" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-03-19T00:00:00-05:00" />
-<script type="application/ld+json">
-{"description":"How much energy is actually renewable and humanity’s cap in consumption","url":"https://narsil.github.io/energy/2020/03/19/solar-energy.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://narsil.github.io/energy/2020/03/19/solar-energy.html"},"headline":"Super simple estimation of available solar energy","dateModified":"2020-03-19T00:00:00-05:00","datePublished":"2020-03-19T00:00:00-05:00","@context":"https://schema.org"}</script>
-<!-- End Jekyll SEO tag -->
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="referrer" content="no-referrer">
 
-  <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/main.css">
-  <link
-    rel="stylesheet"
-    href="//use.fontawesome.com/releases/v5.0.7/css/all.css"
-  /><link type="application/atom+xml" rel="alternate" href="https://narsil.github.io/feed.xml" title="Narsil" />
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
-    integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq"
-    crossorigin="anonymous"
-  />
-  <script
-    type="text/javascript"
-    async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"
-  ></script>
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
-    integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz"
-    crossorigin="anonymous"
-  ></script>
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI"
-    crossorigin="anonymous"
-  ></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '[%', right: '%]', display: true},
-          {left: '$', right: '$', display: false},
-        ],
-      });
-    });
-  </script>
-  
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
 
-  <script>
-    function wrap_img(fn) {
-      if (
-        document.attachEvent
-          ? document.readyState === 'complete'
-          : document.readyState !== 'loading'
-      ) {
-        var elements = document.querySelectorAll('.post img');
-        Array.prototype.forEach.call(elements, function(el, i) {
-          if (el.getAttribute('title')) {
-            const caption = document.createElement('figcaption');
-            var node = document.createTextNode(el.getAttribute('title'));
-            caption.appendChild(node);
-            const wrapper = document.createElement('figure');
-            wrapper.className = 'image';
-            el.parentNode.insertBefore(wrapper, el);
-            el.parentNode.removeChild(el);
-            wrapper.appendChild(el);
-            wrapper.appendChild(caption);
-          }
-        });
-      } else {
-        document.addEventListener('DOMContentLoaded', fn);
-      }
-    }
-    window.onload = wrap_img;
-  </script>
+        <title>Super simple estimation of available solar energy | Narsil</title>
+<meta property="og:title" content="Super simple estimation of available solar energy | Narsil" />
+<meta name="twitter:title" content="Super simple estimation of available solar energy | Narsil" />
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // add link icon to anchor tags
-      var elem = document.querySelectorAll('.anchor-link');
-      elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
-      // remove paragraph tags in rendered toc (happens from notebooks)
-      var toctags = document.querySelectorAll('.toc-entry');
-      toctags.forEach(
-        e =>
-          (e.firstElementChild.innerText = e.firstElementChild.innerText.replace(
-            '¶',
-            '',
-          )),
-      );
-    });
-  </script>
-</head>
-<body><header class="site-header" role="banner">
-
-  <div class="wrapper"><a class="site-title" rel="author" href="/">Narsil</a><nav class="site-nav">
-        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-        <label for="nav-trigger">
-          <span class="menu-icon">
-            <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
-            </svg>
-          </span>
-        </label>
-
-        <div class="trigger"><a class="page-link" href="/about/">About Me</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
-      </nav></div>
-</header>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Super simple estimation of available solar energy</h1><p class="page-description">How much energy is actually renewable and humanity&#39;s cap in consumption</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-03-19T00:00:00-05:00" itemprop="datePublished">
-        Mar 19, 2020
-      </time>
-       • <span class="read-time" title="Estimated read time">
-    
-    
-      3 min read
-    
-</span></p>
-
-    
-      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
-      
-        <a class="category-tags-link" href="//categories/#energy">energy</a>
         
-      
-      </p>
-    
+<meta name="description" content="Solar energy Stefan boltzmann's law $ \text{Surface energy} = \sigma T^4$ For the sun, $T = \text{5,778 }K$ $\sigma = 5.67 \times 10 ^{-8} W.m^{-2}.K^{-4}$            from sympy.physics.units import K, W, m, giga sigma = 5.67 * 10**(-8) * W *m**(-2) * K**(-4) T = 5778 * K s…">
+<meta property="og:description" content="Solar energy Stefan boltzmann's law $ \text{Surface energy} = \sigma T^4$ For the sun, $T = \text{5,778 }K$ $\sigma = 5.67 \times 10 ^{-8} W.m^{-2}.K^{-4}$            from sympy.physics.units import K, W, m, giga sigma = 5.67 * 10**(-8) * W *m**(-2) * K**(-4) T = 5778 * K s…">
+<meta name="twitter:description" content="Solar energy Stefan boltzmann's law $ \text{Surface energy} = \sigma T^4$ For the sun, $T = \text{5,778 }K$ $\sigma = 5.67 \times 10 ^{-8} W.m^{-2}.K^{-4}$            from sympy.physics.units import K, W, m, giga sigma = 5.67 * 10**(-8) * W *m**(-2) * K**(-4) T = 5778 * K s…">
 
-    
-      
-        <div class="pb-5 d-flex flex-wrap flex-justify-end">
-          <div class="px-2">
-<a href="https://github.com/Narsil/narsil.github.io/tree/master/_notebooks/2020-03-19-solar-energy.ipynb" role="button">
-    <img class="notebook-badge-image" src="https://img.shields.io/static/v1?label=&message=View%20On%20GitHub&color=586069&logo=github&labelColor=2f363d">
-</a>
-</div><div class="px-2">
-    <a href="https://colab.research.google.com/github/Narsil/narsil.github.io/blob/master/_notebooks/2020-03-19-solar-energy.ipynb">
-        <img class="notebook-badge-image" src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    </a>
-</div>
-        </div>
-      </header>
+        <meta property="og:site_name" content="Narsil" />
+        <meta property="og:url" content="https:&#x2F;&#x2F;nodata.dev" />
 
-  <div class="post-content e-content" itemprop="articleBody">
-    <ul class="section-nav">
-<li class="toc-entry toc-h1"><a href="#Solar-energy">Solar energy </a>
-<ul>
-<li class="toc-entry toc-h2"><a href="#Stefan-boltzmann's-law">Stefan boltzmann&#39;s law </a></li>
-<li class="toc-entry toc-h2"><a href="#Total-emitted-solar-energy">Total emitted solar energy </a></li>
-<li class="toc-entry toc-h2"><a href="#Energy-received-at-earth-average-distance">Energy received at earth average distance </a></li>
-<li class="toc-entry toc-h2"><a href="#Energy-received-by-the-earth-surface-(before-atmosphere)">Energy received by the earth surface (before atmosphere) </a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h1"><a href="#Human-consumption">Human consumption </a>
-<ul>
-<li class="toc-entry toc-h3"><a href="#A-bit-more-realistic-approach">A bit more realistic approach </a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h1"><a href="#Conclusion">Conclusion </a></li>
-</ul><!--
+        <script src="https://nodata.dev/js/instantpage.min.js" type="module" defer></script>
+
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://nodata.dev/base.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/fontawesome.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/brands.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/solid.css" rel="stylesheet">
+
+        <link rel='icon' type='image/x-icon' href="https://nodata.dev/favicon.ico" />
+
+        <link rel="alternate" type="application/atom+xml" title="Narsil" href="https://nodata.dev/atom.xml">
+
+        <link rel="stylesheet" href="https://nodata.dev/css/katex.min.css">
+        <script defer src="https://nodata.dev/js/katex.min.js"></script>
+        <script defer src="https://nodata.dev/js/mathtex-script-type.min.js"></script>
+
+        
+<link rel="stylesheet" href="https://nodata.dev/custom.css" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-light.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-dark.css" media="(prefers-color-scheme: dark)" />
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+
+
+
+<style>
+.l-nav { margin: 0 auto; max-width: 720px; padding: 0.5rem 1rem; font-size: 0.95rem; }
+.l-nav a { margin-right: 1rem; }
+</style>
+
+
+    </head>
+    <body>
+        <a href="#main" class="skip-link p-screen-reader-text">Skip to content</a>
+        <header class="l-header">
+            <h1 class="c-title p-title"><a href="https:&#x2F;&#x2F;nodata.dev" class="p-title__link">Narsil</a></h1>
+            <p class="p-subtitle">
+                ML &amp; software notes
+            </p>
+            </header>
+
+        <main id="main" class="l-main">
+            
+<article class="p-article">
+  <header>
+    <h1>Super simple estimation of available solar energy
+</h1>
+    <div>
+      <div class="c-time">
+
+        <time datetime=" 2020-03-19">
+          2020-03-19
+        </time>
+        
+         - (15 min read)
+      </div>
+    </div>
+  </header>
+  
+  <section id="js-article" class="p-article__body">
+    <!--
 #################################################
 ### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
 #################################################
 # file to edit: _notebooks/2020-03-19-solar-energy.ipynb
 -->
-
 <div class="container" id="notebook-container">
-        
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Solar-energy">
-<a class="anchor" href="#Solar-energy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Solar energy<a class="anchor-link" href="#Solar-energy"> </a>
-</h1>
-<h2 id="Stefan-boltzmann's-law">
-<a class="anchor" href="#Stefan-boltzmann's-law" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stefan boltzmann's law<a class="anchor-link" href="#Stefan-boltzmann's-law"> </a>
-</h2>
-<p>$ \text{Surface energy} = \sigma T^4$</p>
+<h1 id="Solar-energy">Solar energy<a class="anchor-link" href="#Solar-energy"> </a></h1><h2 id="Stefan-boltzmann's-law">Stefan boltzmann's law<a class="anchor-link" href="#Stefan-boltzmann's-law"> </a></h2><p>$ \text{Surface energy} = \sigma T^4$</p>
 <p>For the sun, $T = \text{5,778 }K$</p>
 <p>$\sigma = 5.67 \times 10 ^{-8} W.m^{-2}.K^{-4}$</p>
-
 </div>
 </div>
 </div>
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">K</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">giga</span>
-
 <span class="n">sigma</span> <span class="o">=</span> <span class="mf">5.67</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">W</span> <span class="o">*</span><span class="n">m</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">K</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mi">5778</span> <span class="o">*</span> <span class="n">K</span>
 <span class="n">surface_energy</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">T</span><span class="o">**</span><span class="mi">4</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">surface_energy</span><span class="p">)</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>63196526.5460292*watt/meter**2
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Total-emitted-solar-energy">
-<a class="anchor" href="#Total-emitted-solar-energy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Total emitted solar energy<a class="anchor-link" href="#Total-emitted-solar-energy"> </a>
-</h2>
-<p>$ Radiation = \text{Surface of the sun} \times \text{Surface energy} $</p>
+<h2 id="Total-emitted-solar-energy">Total emitted solar energy<a class="anchor-link" href="#Total-emitted-solar-energy"> </a></h2><p>$ Radiation = \text{Surface of the sun} \times \text{Surface energy} $</p>
 <p>$ Radiation = 4 \pi r^2 \times \text{Surface energy} $</p>
-
 </div>
 </div>
 </div>
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
-
 <span class="n">r_sun</span> <span class="o">=</span> <span class="mi">696_340</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">*</span><span class="n">m</span>
 <span class="n">surface_of_sun</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r_sun</span> <span class="o">**</span> <span class="mi">2</span> 
 <span class="n">radiation</span> <span class="o">=</span> <span class="n">surface_of_sun</span> <span class="o">*</span> <span class="n">surface_energy</span>
-
 <span class="nb">print</span><span class="p">(</span><span class="n">radiation</span><span class="p">)</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>1.22573302243694e+26*pi*watt
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Energy-received-at-earth-average-distance">
-<a class="anchor" href="#Energy-received-at-earth-average-distance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Energy received at earth average distance<a class="anchor-link" href="#Energy-received-at-earth-average-distance"> </a>
-</h2>
-<p>$ \text{Radiation received} = \frac{\text{Total sun radiation}}{ \text{sphere at earth's distance}}$</p>
+<h2 id="Energy-received-at-earth-average-distance">Energy received at earth average distance<a class="anchor-link" href="#Energy-received-at-earth-average-distance"> </a></h2><p>$ \text{Radiation received} = \frac{\text{Total sun radiation}}{ \text{sphere at earth's distance}}$</p>
 <p>$ \text{Radiation received} = \frac{Radiation}{ 4 \pi D_{earth-sun}^2} $</p>
-
 </div>
 </div>
 </div>
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">R_earth</span> <span class="o">=</span> <span class="mi">6_371</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">m</span>
 <span class="n">D_earth_sun</span> <span class="o">=</span> <span class="mf">148.88</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">m</span>
 <span class="n">earth_perp_surface</span> <span class="o">=</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">R_earth</span> <span class="o">**</span><span class="mi">2</span>
 <span class="n">sphere</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">D_earth_sun</span> <span class="o">**</span><span class="mi">2</span>
-
 <span class="n">radiation_received</span> <span class="o">=</span> <span class="n">radiation</span> <span class="o">/</span> <span class="n">sphere</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">radiation_received</span><span class="p">)</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>1382.49374484614*watt/meter**2
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Energy-received-by-the-earth-surface-(before-atmosphere)">
-<a class="anchor" href="#Energy-received-by-the-earth-surface-(before-atmosphere)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Energy received by the earth surface (before atmosphere)<a class="anchor-link" href="#Energy-received-by-the-earth-surface-(before-atmosphere)"> </a>
-</h2>
-<p>$ \text{Energy received} = \text{radiation received} \times \frac{ \text{visible surface}}{ \text{earth's surface}} $</p>
-
+<h2 id="Energy-received-by-the-earth-surface-(before-atmosphere)">Energy received by the earth surface (before atmosphere)<a class="anchor-link" href="#Energy-received-by-the-earth-surface-(before-atmosphere)"> </a></h2><p>$ \text{Energy received} = \text{radiation received} \times \frac{ \text{visible surface}}{ \text{earth's surface}} $</p>
 </div>
 </div>
 </div>
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">power_received</span> <span class="o">=</span> <span class="n">radiation_received</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">R_earth</span> <span class="o">**</span><span class="mi">2</span>
 <span class="n">surface_power_received</span> <span class="o">=</span> <span class="n">power_received</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">R_earth</span> <span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-
 <span class="nb">print</span><span class="p">(</span><span class="n">surface_power_received</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">power_received</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>345.623436211536*watt/meter**2
 1.76290235470883e+17*watt
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<blockquote>
-<p>RADIATION RECEIVED BY SYSTEM EARTH  = $345 W.m^{-2}$</p>
+<blockquote><p>RADIATION RECEIVED BY SYSTEM EARTH  = $345 W.m^{-2}$</p>
 <p>MAXIMUM POWER WITH EARTH "DYSON SPHERE": $176 PW$</p>
 </blockquote>
-
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Human-consumption">
-<a class="anchor" href="#Human-consumption" aria-hidden="true"><span class="octicon octicon-link"></span></a>Human consumption<a class="anchor-link" href="#Human-consumption"> </a>
-</h1>
-<p>13 511 MTep <a href="https://www.iea.org/data-and-statistics?country=WORLD&amp;fuel=Energy%20supply&amp;indicator=Total%20primary%20energy%20supply%20%28TPES%29%20by%20source">Source International Energy agency</a></p>
-
+<h1 id="Human-consumption">Human consumption<a class="anchor-link" href="#Human-consumption"> </a></h1><p>13 511 MTep <a href="https://www.iea.org/data-and-statistics?country=WORLD&amp;fuel=Energy%20supply&amp;indicator=Total%20primary%20energy%20supply%20%28TPES%29%20by%20source">Source International Energy agency</a></p>
 </div>
 </div>
 </div>
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sympy.physics.units</span> <span class="kn">import</span> <span class="n">J</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">W</span>
 <span class="kn">from</span> <span class="nn">sympy.physics.units.util</span> <span class="kn">import</span> <span class="n">convert_to</span>
-
 <span class="n">million</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span><span class="mi">6</span>
 <span class="n">kilo</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span>
 <span class="n">giga</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span>
 <span class="n">toe</span> <span class="o">=</span> <span class="mf">41.868</span> <span class="o">*</span> <span class="n">giga</span> <span class="o">*</span> <span class="n">J</span>
 <span class="n">ktoe</span> <span class="o">=</span> <span class="n">kilo</span> <span class="o">*</span> <span class="n">toe</span>
 <span class="n">Mtoe</span> <span class="o">=</span> <span class="n">million</span> <span class="o">*</span> <span class="n">toe</span>
-
 <span class="n">hour</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">s</span>
 <span class="n">year</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="mf">365.25</span>
-
 <span class="n">base</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mi">3852538</span><span class="p">,</span><span class="mi">2949909</span><span class="p">,</span><span class="mi">670298</span><span class="p">,</span><span class="mi">335519</span><span class="p">,</span><span class="mi">204190</span><span class="p">,</span><span class="mi">1286064</span><span class="p">,</span><span class="mi">4329220</span><span class="p">])</span>
 <span class="n">Humanity_total_annual_consumption</span> <span class="o">=</span> <span class="n">base</span> <span class="o">*</span> <span class="n">ktoe</span>
-
-
 <span class="n">humanity_power_consumption</span> <span class="o">=</span> <span class="n">Humanity_total_annual_consumption</span> <span class="o">/</span> <span class="n">year</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span><span class="o">.</span><span class="n">n</span><span class="p">(),</span> <span class="p">[</span><span class="n">W</span><span class="p">])</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>18080149776408.9*watt
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span> <span class="o">/</span> <span class="n">power_received</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="p">[</span><span class="n">J</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>0.0102558997258785
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We are currently consuming <strong>0.01% of the maximum capacity of the earth covered by a Dyson sphere of solar panels</strong>.</p>
-
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="A-bit-more-realistic-approach">
-<a class="anchor" href="#A-bit-more-realistic-approach" aria-hidden="true"><span class="octicon octicon-link"></span></a>A bit more realistic approach<a class="anchor-link" href="#A-bit-more-realistic-approach"> </a>
-</h3>
+<h3 id="A-bit-more-realistic-approach">A bit more realistic approach<a class="anchor-link" href="#A-bit-more-realistic-approach"> </a></h3>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>After the atmosphere only $168 W.m^{-2}$ hit the surface. It's quite complicated to infer it depends on the wavelength of the incoming light, clouds, composition of the atmosphere and so on, so we just take the value from <a href="https://fr.wikipedia.org/wiki/Bilan_radiatif_de_la_Terre">here</a>.</p>
-
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Then we only have 29% of the earth surface that is landmass (where we can reasonably put solar panels in large quantity)</p>
-
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Of that 31% is covered in forest which are already some natural solar panels we don't  want to remove (for other obvious reasons) <a href="http://www.earth-policy.org/indicators/C56/forests_2012">source</a>
 And 38.4% is covered of agricultural land <a href="https://en.wikipedia.org/wiki/Agricultural_land">source</a>.</p>
-
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Then solar panels are not 100% efficient. They are roughly only 20% efficient with current technology at a reasonable cost.</p>
-
 </div>
 </div>
 </div>
-    
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">earth_power_received</span> <span class="o">=</span> <span class="mi">168</span> <span class="o">*</span> <span class="n">W</span> <span class="o">*</span> <span class="n">m</span> <span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-
 <span class="n">available_surface</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">R_earth</span> <span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.29</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-.</span><span class="mi">31</span> <span class="o">-</span> <span class="o">.</span><span class="mi">384</span><span class="p">)</span>
-
 <span class="n">max_power</span> <span class="o">=</span> <span class="n">earth_power_received</span> <span class="o">*</span> <span class="n">available_surface</span> <span class="o">*</span> <span class="mf">0.2</span>
-
 <span class="nb">print</span><span class="p">(</span><span class="n">max_power</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">convert_to</span><span class="p">(</span><span class="n">humanity_power_consumption</span> <span class="o">/</span> <span class="n">max_power</span> <span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="p">[</span><span class="n">J</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span><span class="o">.</span><span class="n">n</span><span class="p">())</span>
 </pre></div>
-
     </div>
 </div>
 </div>
-
 <div class="output_wrapper">
 <div class="output">
-
 <div class="output_area">
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>1.52084087357243e+15*watt
 1.18882587196246
 </pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Conclusion">
-<a class="anchor" href="#Conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion<a class="anchor-link" href="#Conclusion"> </a>
-</h1>
+<h1 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h1>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In the end we are currently consuming <strong>1.2% of the realistic available solar power energy</strong>. That's would require posing solar panels everywhere on the planet that is not a forest or agricultural land. And we don't account yet for Energy return on energy invested (EROEI) which is likely to increase that percentage.</p>
 <p>NB: This is a very superficial attempt to evaluate these numbers, however the result should be correct within an order of magnitude.</p>
-
 </div>
 </div>
 </div>
 </div>
 
-
-
-  </div><!-- from https://github.com/utterance/utterances -->
-<script src="https://utteranc.es/client.js"
-        repo="Narsil/narsil.github.io"
-        issue-term="title"
-        label="blogpost-comment"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script><a class="u-url" href="/energy/2020/03/19/solar-energy.html" hidden></a>
+  </section>
+  <footer>
+    <nav class="c-pagination p-pagination">
+      <div class="c-pagination__ctrl">
+        <div class="c-pagination__newer">
+          
+        </div>
+        <div class="c-pagination__older">
+          
+        </div>
+      </div>
+    </nav>
+  </footer>
 </article>
-      </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="/"></data>
+            
+        </main>
 
-  <div class="wrapper">
 
-    <h2 class="footer-heading">Narsil</h2>
+      <footer class="l-footer">
+          
+<nav class="l-nav">
+  <a href="https:&#x2F;&#x2F;nodata.dev/">Home</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/about/">About</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/tags/">Tags</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/categories/">Categories</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/search/">Search</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/atom.xml">Feed</a>
+</nav>
+<p class="p-copyright">
+              
+              © Nicolas Patry
+          </p>
 
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">Narsil</li></ul>
-      </div>
+      </footer>
 
-      <div class="footer-col footer-col-2"><ul class="social-media-list">
-  <li>
-    <a
-      href="https://github.com/Narsil"
-      ><svg class="social svg-icon">
-        <use
-          xlink:href="/assets/minima-social-icons.svg#github"
-        ></use>
-      </svg>
-      <span class="username"></span></a
-    >
-  </li><li>
-    <a
-      href="https://www.twitter.com/narsilou"
-      ><svg class="social svg-icon">
-        <use
-          xlink:href="/assets/minima-social-icons.svg#twitter"
-        ></use>
-      </svg>
-      <span class="username">narsilou</span></a
-    >
-  </li></ul>
-</div>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140784374-1"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
 
-      <div class="footer-col footer-col-3">
-        <p>Small experiments insights from ML and software development.</p>
-      </div>
-    </div>
-
-  </div>
-
-</footer>
-</body>
-
+          gtag('config', 'UA-140784374-1');
+      </script>
+    </body>
 </html>
+

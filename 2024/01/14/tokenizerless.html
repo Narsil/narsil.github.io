@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="referrer" content="no-referrer">
+
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+
+        <title>All we need is tokenizerless | Narsil</title>
+<meta property="og:title" content="All we need is tokenizerless | Narsil" />
+<meta name="twitter:title" content="All we need is tokenizerless | Narsil" />
+
+        
+<meta name="description" content="What tokenization achieves   Tokenization enables models to have some form of temporal compression (read outputting several characters as 1 timestep) while also increasing the entropy of those item. By definition we use compression algorithm to create the tokens, which means the …">
+<meta property="og:description" content="What tokenization achieves   Tokenization enables models to have some form of temporal compression (read outputting several characters as 1 timestep) while also increasing the entropy of those item. By definition we use compression algorithm to create the tokens, which means the …">
+<meta name="twitter:description" content="What tokenization achieves   Tokenization enables models to have some form of temporal compression (read outputting several characters as 1 timestep) while also increasing the entropy of those item. By definition we use compression algorithm to create the tokens, which means the …">
+
+        <meta property="og:site_name" content="Narsil" />
+        <meta property="og:url" content="https:&#x2F;&#x2F;nodata.dev" />
+
+        <script src="https://nodata.dev/js/instantpage.min.js" type="module" defer></script>
+
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://nodata.dev/base.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/fontawesome.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/brands.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/solid.css" rel="stylesheet">
+
+        <link rel='icon' type='image/x-icon' href="https://nodata.dev/favicon.ico" />
+
+        <link rel="alternate" type="application/atom+xml" title="Narsil" href="https://nodata.dev/atom.xml">
+
+        <link rel="stylesheet" href="https://nodata.dev/css/katex.min.css">
+        <script defer src="https://nodata.dev/js/katex.min.js"></script>
+        <script defer src="https://nodata.dev/js/mathtex-script-type.min.js"></script>
+
+        
+<link rel="stylesheet" href="https://nodata.dev/custom.css" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-light.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-dark.css" media="(prefers-color-scheme: dark)" />
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+
+
+
+<style>
+.l-nav { margin: 0 auto; max-width: 720px; padding: 0.5rem 1rem; font-size: 0.95rem; }
+.l-nav a { margin-right: 1rem; }
+</style>
+
+
+    </head>
+    <body>
+        <a href="#main" class="skip-link p-screen-reader-text">Skip to content</a>
+        <header class="l-header">
+            <h1 class="c-title p-title"><a href="https:&#x2F;&#x2F;nodata.dev" class="p-title__link">Narsil</a></h1>
+            <p class="p-subtitle">
+                ML &amp; software notes
+            </p>
+            </header>
+
+        <main id="main" class="l-main">
+            
+<article class="p-article">
+  <header>
+    <h1>All we need is tokenizerless
+</h1>
+    <div>
+      <div class="c-time">
+
+        <time datetime=" 2024-01-14">
+          2024-01-14
+        </time>
+        by nicolas
+         - (3 min read)
+      </div>
+    </div>
+  </header>
+  <div class="toc">
+    <strong>Contents</strong>
+    <div>
+      <nav id="TableOfContents">
+        <ul>
+          
+          <li>
+            <a href="https://nodata.dev/2024/01/14/tokenizerless.html/#what-tokenization-achieves">What tokenization achieves</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2024/01/14/tokenizerless.html/#tokenization-limits">Tokenization limits</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2024/01/14/tokenizerless.html/#temporal-coherence">Temporal coherence</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2024/01/14/tokenizerless.html/#multi-level-hierarchy">Multi level hierarchy</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2024/01/14/tokenizerless.html/#results">Results</a>
+            
+          </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <section id="js-article" class="p-article__body">
+    <h1 id="what-tokenization-achieves">What tokenization achieves<a class="zola-anchor" href="#what-tokenization-achieves" aria-label="Anchor link for: what-tokenization-achieves"><i class="fas fa-link"></i></a> 
+</h1>
+<p>Tokenization enables models to have some form of temporal compression (read outputting several characters as 1 timestep) while also increasing the entropy of those item. By definition we use compression algorithm to create the tokens, which means the distribution is trying to become closer the the uniform distribution.</p>
+<p>That means that models outputting random tokens will still make a coherent native looking output. It also means that the random distribution is a good starting point for the model itself (which wouldn't be the case with any real language)</p>
+<h1 id="tokenization-limits">Tokenization limits<a class="zola-anchor" href="#tokenization-limits" aria-label="Anchor link for: tokenization-limits"><i class="fas fa-link"></i></a> 
+</h1>
+<p>Tokenization is limiting because it doesn't take into account previous tokens. Therefore, while the distribution of tokens is relatively uniform, the distribution of pairs of tokens is most definitely not, so some pairs are easier to train than others. This is what makes speculation working so well. One would think than having a more complex tokenizer would help here, but having more tokens in the vocabulary also is a cost, and because the tokenization methods are so crude, they yield diminishing returns.</p>
+<p>Also tokenization doesn't really work well with unicode. Unicode is the method to create all non ascii characters, where most non latin languages rely on. For a language like Chinese, you would need a vocabulary of size ~100k to just to get all the initial vocabulary (10k being a bare minimum). Because that's humongous and some of these bare characters are underrepresented, usually tokenizers remove some of these rare base chars, creating UNK tokens once again. The other technique is called byte fallback, meaning those unknown characters are shown to the model as their raw bytes representations. This works in training, but that also means that the model can output arbitrary sequences of raw bytes, meaning the model can also talk non valid utf-8 outputs which you have to deal with.</p>
+<h1 id="temporal-coherence">Temporal coherence<a class="zola-anchor" href="#temporal-coherence" aria-label="Anchor link for: temporal-coherence"><i class="fas fa-link"></i></a> 
+</h1>
+<p>One thing to note, is that if you look at the output distribution of a transformers, even a simple one, there are definite breakpoints in <em>entropy</em>, and they really look like the original tokenizers, like "the ", or "or ".</p>
+<h1 id="multi-level-hierarchy">Multi level hierarchy<a class="zola-anchor" href="#multi-level-hierarchy" aria-label="Anchor link for: multi-level-hierarchy"><i class="fas fa-link"></i></a> 
+</h1>
+<p>Achieving tokenizerless temporal coherence by pure ML ways, would enable models to stack various levels of temporal coherence on top of each other. There could be one level for the "tokens", but also some for the "sentences", or "paragraphs" or even "entire books".</p>
+<p>This is actually how most written content is written. Not exactly word for word in a continuous stream, but more a back and forth between multiple timescales. Write the abstract, expand some paragraphs, revisit the structure, rewrite sentences, fix typos, go back again to the top level structure, change a bit the conclusion, create a title, go back down to the first paragraph and so on. There is a constant jumping between timescale representations that produces modifications to another timescale representation.</p>
+<h1 id="results">Results<a class="zola-anchor" href="#results" aria-label="Anchor link for: results"><i class="fas fa-link"></i></a> 
+</h1>
+
+  </section>
+  <footer>
+    <nav class="c-pagination p-pagination">
+      <div class="c-pagination__ctrl">
+        <div class="c-pagination__newer">
+          
+        </div>
+        <div class="c-pagination__older">
+          
+        </div>
+      </div>
+    </nav>
+  </footer>
+</article>
+            
+        </main>
+
+
+      <footer class="l-footer">
+          
+<nav class="l-nav">
+  <a href="https:&#x2F;&#x2F;nodata.dev/">Home</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/about/">About</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/tags/">Tags</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/categories/">Categories</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/search/">Search</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/atom.xml">Feed</a>
+</nav>
+<p class="p-copyright">
+              
+              © Nicolas Patry
+          </p>
+
+      </footer>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140784374-1"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-140784374-1');
+      </script>
+    </body>
+</html>
+

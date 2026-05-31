@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="referrer" content="no-referrer">
+
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+
+        <title>A non-NLP application of Word2Vec | Narsil</title>
+<meta property="og:title" content="A non-NLP application of Word2Vec | Narsil" />
+<meta name="twitter:title" content="A non-NLP application of Word2Vec | Narsil" />
+
+        
+<meta name="description" content="When using Machine Learning to solve a problem, having the right data is crucial. Unfortunately, raw data is often “unclean” and unstructured. Natural Language Processing (NLP)  practitioners are familiar with this issue as all of their data is textual. And because most of Machin…">
+<meta property="og:description" content="When using Machine Learning to solve a problem, having the right data is crucial. Unfortunately, raw data is often “unclean” and unstructured. Natural Language Processing (NLP)  practitioners are familiar with this issue as all of their data is textual. And because most of Machin…">
+<meta name="twitter:description" content="When using Machine Learning to solve a problem, having the right data is crucial. Unfortunately, raw data is often “unclean” and unstructured. Natural Language Processing (NLP)  practitioners are familiar with this issue as all of their data is textual. And because most of Machin…">
+
+        <meta property="og:site_name" content="Narsil" />
+        <meta property="og:url" content="https:&#x2F;&#x2F;nodata.dev" />
+
+        <script src="https://nodata.dev/js/instantpage.min.js" type="module" defer></script>
+
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://nodata.dev/base.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/fontawesome.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/brands.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/solid.css" rel="stylesheet">
+
+        <link rel='icon' type='image/x-icon' href="https://nodata.dev/favicon.ico" />
+
+        <link rel="alternate" type="application/atom+xml" title="Narsil" href="https://nodata.dev/atom.xml">
+
+        <link rel="stylesheet" href="https://nodata.dev/css/katex.min.css">
+        <script defer src="https://nodata.dev/js/katex.min.js"></script>
+        <script defer src="https://nodata.dev/js/mathtex-script-type.min.js"></script>
+
+        
+<link rel="stylesheet" href="https://nodata.dev/custom.css" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-light.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-dark.css" media="(prefers-color-scheme: dark)" />
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+
+
+
+<style>
+.l-nav { margin: 0 auto; max-width: 720px; padding: 0.5rem 1rem; font-size: 0.95rem; }
+.l-nav a { margin-right: 1rem; }
+</style>
+
+
+    </head>
+    <body>
+        <a href="#main" class="skip-link p-screen-reader-text">Skip to content</a>
+        <header class="l-header">
+            <h1 class="c-title p-title"><a href="https:&#x2F;&#x2F;nodata.dev" class="p-title__link">Narsil</a></h1>
+            <p class="p-subtitle">
+                ML &amp; software notes
+            </p>
+            </header>
+
+        <main id="main" class="l-main">
+            
+<article class="p-article">
+  <header>
+    <h1>A non-NLP application of Word2Vec
+</h1>
+    <div>
+      <div class="c-time">
+
+        <time datetime=" 2017-07-31">
+          2017-07-31
+        </time>
+        by nicolas
+         - (7 min read)
+      </div>
+    </div>
+  </header>
+  <div class="toc">
+    <strong>Contents</strong>
+    <div>
+      <nav id="TableOfContents">
+        <ul>
+          
+          <li>
+            <a href="https://nodata.dev/2017/07/31/a-non-nlp-application-of-word2vec.html/#word2vec">Word2Vec</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2017/07/31/a-non-nlp-application-of-word2vec.html/#application">Application</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2017/07/31/a-non-nlp-application-of-word2vec.html/#conclusion">Conclusion</a>
+            
+          </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <section id="js-article" class="p-article__body">
+    <p>When using <strong>Machine Learning</strong> to solve a problem, having the right <strong>data</strong> is crucial. Unfortunately, raw data is often “unclean” and <strong>unstructured</strong>. <a rel="nofollow external" href="https://en.wikipedia.org/wiki/Natural_language_processing">Natural Language Processing</a> (<strong>NLP</strong>)  practitioners are familiar with this issue as all of their data is <strong>textual</strong>. And because most of Machine Learning algorithms can’t accept raw <em>strings</em> as inputs, <strong>word embedding</strong> methods are used to transform the data before feeding it to a learning algorithm. But this is not the only scenario where textual data arises, it can also take the form of categorical features in standard non-NLP tasks. In fact, many of us struggle with the processing of these kinds of features, so are word embedding of any use in this case ?</p>
+<p>This article aims to show how we were able to use <strong>Word2Vec</strong> (<a rel="nofollow external" href="https://arxiv.org/pdf/1301.3781.pdf">2013, Mikolov et al.</a>), a word embedding technique, to convert a <strong>categorical feature</strong> with a <strong>high number of modalities</strong> into a smaller set of easier-to-use <strong>numerical features</strong>. These features were not only easier to use but also successfully <strong>learned relationships</strong> between the several modalities similar to how classic word embeddings do with language.</p>
+<h1 id="word2vec">Word2Vec<a class="zola-anchor" href="#word2vec" aria-label="Anchor link for: word2vec"><i class="fas fa-link"></i></a> 
+</h1>
+<blockquote>
+<p>You shall know a word by the company it keeps (<a rel="nofollow external" href="https://en.wikipedia.org/wiki/John_Rupert_Firth">Firth, J. R.</a> 1957:11)</p>
+</blockquote>
+<p>The above is exactly what Word2Vec seeks to do : it tries to determine the meaning of a word by analyzing its neighboring words (also called <strong>context</strong>). The algorithm exists in two flavors <strong>CBOW</strong> and <strong>Skip-Gram</strong>. Given a set of sentences (also called <strong>corpus</strong>) the model loops on the words of each sentence and either tries to use the current word of to predict its neighbors (its context), in which case the method is called “Skip-Gram”, or it uses each of these contexts to predict the current word, in which case the method is called “Continuous Bag Of Words” (CBOW). The limit on the number of words in each context is determined by a parameter called “<strong>window size</strong>”.</p>
+<p><img src="/assets/images/non-nlp1.png" alt="" /></p>
+<p>Both Word2Vec architectures. The current word is w(t) and w(t-2)..w(t+2) are context words. (Mikolov et al. 2013)</p>
+<p>So if we choose for example the Skip-Gram method, Word2Vec then consists of using a <strong>shallow neural network</strong>, i.e. a neural network of only one hidden layer, to learn the word embedding. The network first initializes randomly its weights then iteratively adapt these during training to minimize the error it makes when using words to predict their contexts. After a hopefully successful training, the word embedding for each word is obtained by multiplying the network’s <strong>weight matrix</strong> by the word’s <a rel="nofollow external" href="https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-science">one-hot vector</a>.</p>
+<blockquote>
+<p>Note : Besides allowing for a numerical representation of textual data, the resulting embedding also learn interesting <a rel="nofollow external" href="http://www.aclweb.org/anthology/N13-1090"><strong>relationships between words</strong></a>  and can be used to answer questions such as : <em>king is to queen as father is to …?</em></p>
+</blockquote>
+<p>For more details on Word2Vec you can have a look at this <a rel="nofollow external" href="https://www.youtube.com/watch?v=ERibwqs9p38">Stanford lecture</a> or this <a rel="nofollow external" href="https://www.tensorflow.org/tutorials/word2vec">tutorial by Tensorflow</a>.</p>
+<h1 id="application">Application<a class="zola-anchor" href="#application" aria-label="Anchor link for: application"><i class="fas fa-link"></i></a> 
+</h1>
+<p>At <a rel="nofollow external" href="https://www.kwyk.fr/"><strong>Kwyk</strong></a>  we provide math exercises online. Teachers assign <strong>homework</strong> to their students and each time an exercise is done some <strong>data</strong> is stored. Then, we use the collected data to <strong>evaluate the students’ level</strong> and give them <strong>tailored</strong> review exercises to help them progress. For each exercise that is answered we store a list of identifiers that help us tell : <strong>what is the answered exercise ?</strong>, <strong>who is the student ? , what is the chapter ?</strong>… In addition to that, we store a <strong>score</strong> value that is either (0) or (1) depending on the student success. To evaluate the students’ levels we then simply have to predict this score value and get success probabilities from our classifier.</p>
+<p>As you can see, a lot of our features are <strong>categorical</strong>. Usually, when the number of <strong>modalities</strong> is small enough, one can simply transform a categorical feature with (n) modalities into (n-1) dummy variables then use that for training. But when the number of modalities is in the many thousands — as it is the case for some of our features — relying on dummy variables becomes inefficient and impracticable.</p>
+<p>In order to address this issue our idea is to use Word2Vec to <strong>transform categorical features</strong> into a relatively small number of usable <strong>continuous features</strong> using a little trick. To illustrate, let’s consider “exercise_id”, a categorical feature telling us which exercise was answered. In order to be able to use Word2Vec we have to provide a <strong>corpus</strong>, a set of sentences to feed to the algorithm. But the raw feature — a list of ids — isn’t a corpus <em>per se :</em> the order is completely <strong>random</strong> and closer ids don’t carry any <strong>information</strong> about their neighbors. <strong>Our trick</strong> consists of considering each homework given by a teacher as a “sentence”, a <strong>coherent</strong> list exercise ids. As a result, ids are <strong>naturally</strong> gathered by levels, chapters… and Word2Vec can start learning exercise embedding directly on that.</p>
+<p>Indeed, thanks to these artificial sentences we were able to use Word2Vec and get beautiful results :</p>
+<p><img src="/assets/images/non-nlp2.png" alt="" /></p>
+<p>Exercise embedding (3 main components of PCA) colored by level. 6e, 5e, 4e, 3e, 2e, 1e and tm are the french equivalents of the 6th, 7th, 8th, 9th, 10th, 11th and 12th grades in the US.</p>
+<p>As we can see, the resulting embedding has a <strong>structure</strong>. In fact, the 3d-projected cloud of exercises is spiral-shaped with <strong>exercises of higher levels following directly those of previous levels</strong>. This means that the embedding successfully learned to <strong>distinguish</strong> exercises of different school levels and regrouped similar exercises together. But that’s not all, using a <a rel="nofollow external" href="https://en.wikipedia.org/wiki/Nonlinear_dimensionality_reduction#Locally-linear_embedding"><strong>non-linear dimensionality reduction</strong></a> technique we were able to reduce the whole embedding into a single real valued variable with the same characteristics. In other terms, we obtained an <strong>exercise complexity</strong> feature that is minimum for 6th grade exercises and <strong>grows</strong> as the exercises get more and <strong>more complex</strong> until it is maximum for 12th grade exercises.</p>
+<p>Moreover, the embedding also learned <strong>relationships</strong> between exercises just like Mikolov’s did with English words :</p>
+<p><img src="/assets/images/non-nlp3.png" alt="" /></p>
+<p>The diagram above shows some examples of the relationships our embedding was able to learn. So if we were to ask the question <em>“an exercise of</em> <strong><em>number addition</em></strong> <em>is to an exercise of</em> <strong><em>number subtraction</em></strong> <em>as an exercise of</em> <strong><em>time addition</em></strong> <em>is to … ?”</em> the embedding gives us the answer “<em>an exercise of</em> <strong><em>time subtraction</em></strong>”. Concretely, this means that if we take the difference embedding[Substract(Numbers)] - embedding[Add(Numbers)] and add it to the embedding of an exercise where students are asked to add time values (hours, minutes …) then the closest embedding is one of an exercise that consists of subtracting time values.</p>
+<h1 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion"><i class="fas fa-link"></i></a> 
+</h1>
+<p>All in all, word embedding techniques are useful to transform textual data into real valued vectors which can then be plugged easily into a machine learning algorithm. Despite being principally used for NLP applications such as <em>machine translation</em>, we showed that these techniques also have their place for categorical feature processing by giving the example of a particular feature we use at Kwyk. But in order to be able to apply a technique such as Word2Vec, one has to build a corpus — i.e. a set of sentences where labels are arranged so that a context is implicitly created. In our example, we used homework given on the website to create “sentences” of exercises and learn an exercise embedding. As a result we were able to get new numeric features that successfully learned the relationships between exercises and are then more useful than the bunch of labels they originated from.</p>
+<p><em>Credits go to Christophe Gabard, one of our developers at Kwyk, for having the idea of applying Word2Vec to process categorical features.</em></p>
+
+  </section>
+  <footer>
+    <nav class="c-pagination p-pagination">
+      <div class="c-pagination__ctrl">
+        <div class="c-pagination__newer">
+          
+        </div>
+        <div class="c-pagination__older">
+          
+        </div>
+      </div>
+    </nav>
+  </footer>
+</article>
+            
+        </main>
+
+
+      <footer class="l-footer">
+          
+<nav class="l-nav">
+  <a href="https:&#x2F;&#x2F;nodata.dev/">Home</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/about/">About</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/tags/">Tags</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/categories/">Categories</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/search/">Search</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/atom.xml">Feed</a>
+</nav>
+<p class="p-copyright">
+              
+              © Nicolas Patry
+          </p>
+
+      </footer>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140784374-1"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-140784374-1');
+      </script>
+    </body>
+</html>
+

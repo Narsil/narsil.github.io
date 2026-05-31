@@ -1,496 +1,407 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Deploying a snapshat filter to the browser | Narsil</title>
-<meta name="generator" content="Jekyll v4.1.1" />
-<meta property="og:title" content="Deploying a snapshat filter to the browser" />
-<meta name="author" content="nicolas" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="How to deploy a ML model without worrying about a cloud pipeline." />
-<meta property="og:description" content="How to deploy a ML model without worrying about a cloud pipeline." />
-<link rel="canonical" href="https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html" />
-<meta property="og:url" content="https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html" />
-<meta property="og:site_name" content="Narsil" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-07-29T00:00:00-05:00" />
-<script type="application/ld+json">
-{"description":"How to deploy a ML model without worrying about a cloud pipeline.","url":"https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://narsil.github.io/2020/07/29/deploying-model-in-the-browser.html"},"author":{"@type":"Person","name":"nicolas"},"headline":"Deploying a snapshat filter to the browser","dateModified":"2020-07-29T00:00:00-05:00","datePublished":"2020-07-29T00:00:00-05:00","@context":"https://schema.org"}</script>
-<!-- End Jekyll SEO tag -->
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="referrer" content="no-referrer">
 
-  <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/main.css">
-  <link
-    rel="stylesheet"
-    href="//use.fontawesome.com/releases/v5.0.7/css/all.css"
-  /><link type="application/atom+xml" rel="alternate" href="https://narsil.github.io/feed.xml" title="Narsil" />
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
-    integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq"
-    crossorigin="anonymous"
-  />
-  <script
-    type="text/javascript"
-    async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"
-  ></script>
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
-    integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz"
-    crossorigin="anonymous"
-  ></script>
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI"
-    crossorigin="anonymous"
-  ></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '[%', right: '%]', display: true},
-          {left: '$', right: '$', display: false},
-        ],
-      });
-    });
-  </script>
-  
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
 
-  <script>
-    function wrap_img(fn) {
-      if (
-        document.attachEvent
-          ? document.readyState === 'complete'
-          : document.readyState !== 'loading'
-      ) {
-        var elements = document.querySelectorAll('.post img');
-        Array.prototype.forEach.call(elements, function(el, i) {
-          if (el.getAttribute('title')) {
-            const caption = document.createElement('figcaption');
-            var node = document.createTextNode(el.getAttribute('title'));
-            caption.appendChild(node);
-            const wrapper = document.createElement('figure');
-            wrapper.className = 'image';
-            el.parentNode.insertBefore(wrapper, el);
-            el.parentNode.removeChild(el);
-            wrapper.appendChild(el);
-            wrapper.appendChild(caption);
-          }
-        });
-      } else {
-        document.addEventListener('DOMContentLoaded', fn);
-      }
-    }
-    window.onload = wrap_img;
-  </script>
+        <title>Deploying a snapshat filter to the browser | Narsil</title>
+<meta property="og:title" content="Deploying a snapshat filter to the browser | Narsil" />
+<meta name="twitter:title" content="Deploying a snapshat filter to the browser | Narsil" />
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // add link icon to anchor tags
-      var elem = document.querySelectorAll('.anchor-link');
-      elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
-      // remove paragraph tags in rendered toc (happens from notebooks)
-      var toctags = document.querySelectorAll('.toc-entry');
-      toctags.forEach(
-        e =>
-          (e.firstElementChild.innerText = e.firstElementChild.innerText.replace(
-            '¶',
-            '',
-          )),
-      );
-    });
-  </script>
-</head>
-<body><header class="site-header" role="banner">
+        
+<meta name="description" content="TL;DR In this article I explain how you can deploy a model directly to the browser from pytorch by using Onnjx. This work was done a year ago in about two weeks time.        Check out the full demo.  Deploying a cool deep learning demo at zero cost.   Ok, so when we are showcasi…">
+<meta property="og:description" content="TL;DR In this article I explain how you can deploy a model directly to the browser from pytorch by using Onnjx. This work was done a year ago in about two weeks time.        Check out the full demo.  Deploying a cool deep learning demo at zero cost.   Ok, so when we are showcasi…">
+<meta name="twitter:description" content="TL;DR In this article I explain how you can deploy a model directly to the browser from pytorch by using Onnjx. This work was done a year ago in about two weeks time.        Check out the full demo.  Deploying a cool deep learning demo at zero cost.   Ok, so when we are showcasi…">
 
-  <div class="wrapper"><a class="site-title" rel="author" href="/">Narsil</a><nav class="site-nav">
-        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-        <label for="nav-trigger">
-          <span class="menu-icon">
-            <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
-            </svg>
-          </span>
-        </label>
+        <meta property="og:site_name" content="Narsil" />
+        <meta property="og:url" content="https:&#x2F;&#x2F;nodata.dev" />
 
-        <div class="trigger"><a class="page-link" href="/about/">About Me</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
-      </nav></div>
-</header>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <script src="https://nodata.dev/js/instantpage.min.js" type="module" defer></script>
 
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Deploying a snapshat filter to the browser</h1><p class="page-description">How to deploy a ML model without worrying about a cloud pipeline.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-29T00:00:00-05:00" itemprop="datePublished">
-        Jul 29, 2020
-      </time>• 
-          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <span class="p-author h-card" itemprop="name">nicolas</span></span>
-       • <span class="read-time" title="Estimated read time">
-    
-    
-      9 min read
-    
-</span></p>
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://nodata.dev/base.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/fontawesome.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/brands.css" rel="stylesheet">
+        <link href="https://nodata.dev/fontawesome/solid.css" rel="stylesheet">
 
-    
+        <link rel='icon' type='image/x-icon' href="https://nodata.dev/favicon.ico" />
 
-    </header>
+        <link rel="alternate" type="application/atom+xml" title="Narsil" href="https://nodata.dev/atom.xml">
 
-  <div class="post-content e-content" itemprop="articleBody">
-    <ul class="section-nav">
-<li class="toc-entry toc-h2"><a href="#deploying-a-cool-deep-learning-demo-at-zero-cost">Deploying a cool deep learning demo at zero cost.</a></li>
-<li class="toc-entry toc-h2"><a href="#background">Background</a></li>
-<li class="toc-entry toc-h2"><a href="#lets-get-started-with-3ddfa">Let’s get started with 3DDFA</a>
-<ul>
-<li class="toc-entry toc-h3"><a href="#how-does-it-work-">How does it work ?</a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h2"><a href="#lets-port-the-model-to-the-browser">Let’s port the model to the browser.</a></li>
-<li class="toc-entry toc-h2"><a href="#putting-that-model-in-an-actual-demo-product">Putting that model in an actual demo product.</a>
-<ul>
-<li class="toc-entry toc-h3"><a href="#get-the-webcam-data">Get the webcam data</a></li>
-<li class="toc-entry toc-h3"><a href="#get-the-3d-faces-from-the-image">Get the 3d faces from the image</a></li>
-<li class="toc-entry toc-h3"><a href="#reconstruct-the-vertices">Reconstruct the vertices.</a></li>
-<li class="toc-entry toc-h3"><a href="#add-glasses-on-that-model">Add glasses on that model.</a></li>
-</ul>
-</li>
-<li class="toc-entry toc-h2"><a href="#conclusion">Conclusion</a></li>
-</ul><blockquote>
-  <p>TL;DR In this article I explain how you can deploy a model directly to the browser from pytorch by using Onnjx. This work was done a year ago in about two weeks time.</p>
+        <link rel="stylesheet" href="https://nodata.dev/css/katex.min.css">
+        <script defer src="https://nodata.dev/js/katex.min.js"></script>
+        <script defer src="https://nodata.dev/js/mathtex-script-type.min.js"></script>
+
+        
+<link rel="stylesheet" href="https://nodata.dev/custom.css" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-light.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="https://nodata.dev/giallo-dark.css" media="(prefers-color-scheme: dark)" />
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+
+
+
+<style>
+.l-nav { margin: 0 auto; max-width: 720px; padding: 0.5rem 1rem; font-size: 0.95rem; }
+.l-nav a { margin-right: 1rem; }
+</style>
+
+
+    </head>
+    <body>
+        <a href="#main" class="skip-link p-screen-reader-text">Skip to content</a>
+        <header class="l-header">
+            <h1 class="c-title p-title"><a href="https:&#x2F;&#x2F;nodata.dev" class="p-title__link">Narsil</a></h1>
+            <p class="p-subtitle">
+                ML &amp; software notes
+            </p>
+            </header>
+
+        <main id="main" class="l-main">
+            
+<article class="p-article">
+  <header>
+    <h1>Deploying a snapshat filter to the browser
+</h1>
+    <div>
+      <div class="c-time">
+
+        <time datetime=" 2020-07-29">
+          2020-07-29
+        </time>
+        by nicolas
+         - (8 min read)
+      </div>
+    </div>
+  </header>
+  <div class="toc">
+    <strong>Contents</strong>
+    <div>
+      <nav id="TableOfContents">
+        <ul>
+          
+          <li>
+            <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#deploying-a-cool-deep-learning-demo-at-zero-cost">Deploying a cool deep learning demo at zero cost.</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#background">Background</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#let-s-get-started-with-3ddfa">Let&#x27;s get started with 3DDFA</a>
+            
+            <ul>
+              
+              <li>
+                <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#how-does-it-work">How does it work ?</a>
+                
+              </li>
+              
+            </ul>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#let-s-port-the-model-to-the-browser">Let&#x27;s port the model to the browser.</a>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#putting-that-model-in-an-actual-demo-product">Putting that model in an actual demo product.</a>
+            
+            <ul>
+              
+              <li>
+                <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#get-the-webcam-data">Get the webcam data</a>
+                
+              </li>
+              
+              <li>
+                <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#get-the-3d-faces-from-the-image">Get the 3d faces from the image</a>
+                
+              </li>
+              
+              <li>
+                <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#reconstruct-the-vertices">Reconstruct the vertices.</a>
+                
+              </li>
+              
+              <li>
+                <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#add-glasses-on-that-model">Add glasses on that model.</a>
+                
+              </li>
+              
+            </ul>
+            
+          </li>
+          
+          <li>
+            <a href="https://nodata.dev/2020/07/29/deploying-model-in-the-browser.html/#conclusion">Conclusion</a>
+            
+          </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <section id="js-article" class="p-article__body">
+    <blockquote>
+<p>TL;DR In this article I explain how you can deploy a model directly to the browser from pytorch by using Onnjx. This work was done a year ago in about two weeks time.</p>
 </blockquote>
-
-<p><img src="/assets/images/face/face.gif" alt=""></p>
+<p><img src="/assets/images/face/face.gif" alt="" /></p>
 <div style="width:100%;text-align:center;">
     <a href="https://narsil.github.io/assets/face/">Check out the full demo</a>.
 </div>
-
-<h2 id="deploying-a-cool-deep-learning-demo-at-zero-cost">
-<a class="anchor" href="#deploying-a-cool-deep-learning-demo-at-zero-cost" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deploying a cool deep learning demo at zero cost.</h2>
-
+<h2 id="deploying-a-cool-deep-learning-demo-at-zero-cost">Deploying a cool deep learning demo at zero cost.<a class="zola-anchor" href="#deploying-a-cool-deep-learning-demo-at-zero-cost" aria-label="Anchor link for: deploying-a-cool-deep-learning-demo-at-zero-cost"><i class="fas fa-link"></i></a> 
+</h2>
 <p>Ok, so when we are showcasing deep learning, usually that implies running models somewhere on the cloud. Sometimes, running these models is by itself quite costly. GPT-3 cost something like 10 million to train, but imagine how much it will cost to <em>run</em> if it was accessible to the general public !</p>
-
 <p>One technique applicable so small machine learning models, it to actually make to client run the model not you. This means that your front can be a simple static website. Hell you could even host it on Github for free !</p>
-
-<h2 id="background">
-<a class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h2>
-
-<p>About a year ago, I was working at <a href="https://nabla.com">Nabla</a> (They pivoted since). We were looking
+<h2 id="background">Background<a class="zola-anchor" href="#background" aria-label="Anchor link for: background"><i class="fas fa-link"></i></a> 
+</h2>
+<p>About a year ago, I was working at <a rel="nofollow external" href="https://nabla.com">Nabla</a> (They pivoted since). We were looking
 at how performant was 3d pose estimation of the face. It means models detecting
 faces <em>with</em> depth which was not as ubiquitous as regular 2d face detection.</p>
-
 <p>The idea was to see how hard it was to fit glasses on the fly to customers.
 The whole thing lasted for 2 weeks, so mind the lack of polish.</p>
-
-<h2 id="lets-get-started-with-3ddfa">
-<a class="anchor" href="#lets-get-started-with-3ddfa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let’s get started with 3DDFA</h2>
-
-<p>So <a href="https://github.com/cleardusk/3DDFA">3DDFA</a> is an improved Pytorch implementation of <a href="https://arxiv.org/abs/1804.01005">this paper</a>.
+<h2 id="let-s-get-started-with-3ddfa">Let's get started with 3DDFA<a class="zola-anchor" href="#let-s-get-started-with-3ddfa" aria-label="Anchor link for: let-s-get-started-with-3ddfa"><i class="fas fa-link"></i></a> 
+</h2>
+<p>So <a rel="nofollow external" href="https://github.com/cleardusk/3DDFA">3DDFA</a> is an improved Pytorch implementation of <a rel="nofollow external" href="https://arxiv.org/abs/1804.01005">this paper</a>.
 We settled on that implementation because it was the best available at the time.</p>
-
-<h3 id="how-does-it-work-">
-<a class="anchor" href="#how-does-it-work-" aria-hidden="true"><span class="octicon octicon-link"></span></a>How does it work ?</h3>
-
+<h3 id="how-does-it-work">How does it work ?<a class="zola-anchor" href="#how-does-it-work" aria-label="Anchor link for: how-does-it-work"><i class="fas fa-link"></i></a> 
+</h3>
 <p>Most 3d pose estimation use the same tricks. First you need a good space representation with few latent variables.
 That is usually taken by creating a quite large dataset of a lot of people in lots of different poses and doing a
 very large PCA on this representation.</p>
-
-<p>For faces, 3ddfa uses a mix of <a href="https://faces.dmi.unibas.ch/bfm/">BFM</a> and <a href="http://kunzhou.net/2012/facewarehouse-tr.pdf">Facewarehouse</a>, for the full human body, <a href="https://smpl.is.tue.mpg.de/">SMPL</a> is often used.</p>
-
+<p>For faces, 3ddfa uses a mix of <a rel="nofollow external" href="https://faces.dmi.unibas.ch/bfm/">BFM</a> and <a rel="nofollow external" href="http://kunzhou.net/2012/facewarehouse-tr.pdf">Facewarehouse</a>, for the full human body, <a rel="nofollow external" href="https://smpl.is.tue.mpg.de/">SMPL</a> is often used.</p>
 <p>In the face case, all 3D scans register the same 53490 vertices on the difference faces of the different participants (100 male and 100 female for BFM). For instance the center nose vertex:</p>
-
-<p><img src="/assets/images/face/bfm-vertex.png" alt=""></p>
-
+<p><img src="/assets/images/face/bfm-vertex.png" alt="" /></p>
 <p>Then we have the same participants, with different expressions:</p>
-
-<p><img src="/assets/images/face/shape_expression_matrix.png" alt=""></p>
-
+<p><img src="/assets/images/face/shape_expression_matrix.png" alt="" /></p>
 <p>Overall we end up with 150 participants x 20 poses x 53490 vertices (3 reals). We can then use a PCA to reduce the dimensionality into 2 orthogonal spaces, one for the <strong>shape</strong> and the other for the <strong>expression</strong> of a face. Such that any face can be expressed as.</p>
-
-<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi><mtext> </mtext><mi>f</mi><mi>a</mi><mi>c</mi><mi>e</mi></mrow></msub><mo>=</mo><msub><mi>N</mi><mrow><mi>n</mi><mi>e</mi><mi>u</mi><mi>t</mi><mi>r</mi><mi>a</mi><mi>l</mi><mtext> </mtext><mi>f</mi><mi>a</mi><mi>c</mi><mi>e</mi></mrow></msub><mo>+</mo><munder><munder><mrow><msub><mi>S</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>∗</mo><msub><mi>S</mi><mrow><mi>s</mi><mi>h</mi><mi>a</mi><mi>p</mi><mi>e</mi></mrow></msub></mrow><mo stretchy="true">⏟</mo></munder><mtext>Person identity</mtext></munder><mo>+</mo><munder><munder><mrow><msub><mi>W</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>∗</mo><msub><mi>W</mi><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mi>r</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi></mrow></msub></mrow><mo stretchy="true">⏟</mo></munder><mtext>Smile or neutral expression</mtext></munder></mrow><annotation encoding="application/x-tex">M_{target\ face} = N_{neutral\ face} + \underbrace{S_{params} * S_{shape}}_{\text{Person identity}} + \underbrace{W_{params} * W_{expression}}_{\text{Smile or neutral expression}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">t</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.439654em;vertical-align:-1.756324em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6833299999999998em;"><span style="top:-1.379784em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">Person identity</span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.68333em;"><span class="svg-align" style="top:-2.065892em;"><span class="pstrut" style="height:3em;"></span><span class="stretchy" style="height:0.548em;min-width:1.6em;"><span class="brace-left" style="height:0.548em;"><svg width="400em" height="0.548em" viewbox="0 0 400000 548" preserveaspectratio="xMinYMin slice"><path d="M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13
- 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688
- 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7
--331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z"></path></svg></span><span class="brace-center" style="height:0.548em;"><svg width="400em" height="0.548em" viewbox="0 0 400000 548" preserveaspectratio="xMidYMin slice"><path d="M199572 214
-c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
- 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3
- 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0
--5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z"></path></svg></span><span class="brace-right" style="height:0.548em;"><svg width="400em" height="0.548em" viewbox="0 0 400000 548" preserveaspectratio="xMaxYMin slice"><path d="M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3
- 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237
--174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z"></path></svg></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">h</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.934108em;"><span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.756324em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.439654em;vertical-align:-1.756324em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6833299999999998em;"><span style="top:-1.379784em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">Smile or neutral expression</span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.68333em;"><span class="svg-align" style="top:-2.065892em;"><span class="pstrut" style="height:3em;"></span><span class="stretchy" style="height:0.548em;min-width:1.6em;"><span class="brace-left" style="height:0.548em;"><svg width="400em" height="0.548em" viewbox="0 0 400000 548" preserveaspectratio="xMinYMin slice"><path d="M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13
- 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688
- 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7
--331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z"></path></svg></span><span class="brace-center" style="height:0.548em;"><svg width="400em" height="0.548em" viewbox="0 0 400000 548" preserveaspectratio="xMidYMin slice"><path d="M199572 214
-c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
- 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3
- 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0
--5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z"></path></svg></span><span class="brace-right" style="height:0.548em;"><svg width="400em" height="0.548em" viewbox="0 0 400000 548" preserveaspectratio="xMaxYMin slice"><path d="M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3
- 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237
--174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z"></path></svg></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">x</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.934108em;"><span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.756324em;"><span></span></span></span></span></span></span></span></span></span>
-
-<p>Actually we’re missing a global orientation of the face which can be represented as a rotation matrix and a scaling factor and an offset, which we will just express as a single matrix $ R $, and a vector $ p $.</p>
-
-<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mrow><mi>t</mi><mi>a</mi><mi>r</mi><mi>g</mi><mi>e</mi><mi>t</mi><mtext> </mtext><mi>f</mi><mi>a</mi><mi>c</mi><mi>e</mi></mrow></msub><mo>=</mo><mi>R</mi><mo>×</mo><mo stretchy="false">(</mo><msub><mi>N</mi><mrow><mi>n</mi><mi>e</mi><mi>u</mi><mi>t</mi><mi>r</mi><mi>a</mi><mi>l</mi><mtext> </mtext><mi>f</mi><mi>a</mi><mi>c</mi><mi>e</mi></mrow></msub><mo>+</mo><msub><mi>S</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>∗</mo><msub><mi>S</mi><mrow><mi>s</mi><mi>h</mi><mi>a</mi><mi>p</mi><mi>e</mi></mrow></msub><mo>+</mo><msub><mi>W</mi><mrow><mi>p</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>s</mi></mrow></msub><mo>∗</mo><msub><mi>W</mi><mrow><mi>e</mi><mi>x</mi><mi>p</mi><mi>r</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi></mrow></msub><mo stretchy="false">)</mo><mo>+</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">M_{target\ face} = R \times ( N_{neutral\ face} + S_{params} * S_{shape} + W_{params} * W_{expression}) + p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">t</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">h</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">m</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">x</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span></span>
-
+<p>$$ M_{target\ face} = N_{neutral\ face} + \underbrace{S_{params} * S_{shape}}<em>{\text{Person identity}} + \underbrace{W</em>{params} * W_{expression}}_{\text{Smile or neutral expression}} $$</p>
+<p>Actually we're missing a global orientation of the face which can be represented as a rotation matrix and a scaling factor and an offset, which we will just express as a single matrix $ R $, and a vector $ p $.</p>
+<p>$$ M_{target\ face} = R \times ( N_{neutral\ face} + S_{params} * S_{shape} + W_{params} * W_{expression}) + p $$</p>
 <p>The 3DDFA model, will actually predict from a photo $ R $, $S_{params}$, $W_{params}$ and $p$. For reference, R is 9 floats, $S_{params}$ is 40 floats, $W_{params}$ is 10 floats, and $p$ is 3 floats. So the actual model of 3DDFA takes a 120x120 pixels image and returns a 62 vector that represents the face.</p>
-
-<p><img src="/assets/images/face/full-model.png" alt=""></p>
-
+<p><img src="/assets/images/face/full-model.png" alt="" /></p>
 <p>The actual architecture of 3ddfa is actually just a simple mobile net.</p>
-
-<h2 id="lets-port-the-model-to-the-browser">
-<a class="anchor" href="#lets-port-the-model-to-the-browser" aria-hidden="true"><span class="octicon octicon-link"></span></a>Let’s port the model to the browser.</h2>
-
-<p>Ok, so let’s isolate the first few lines in <code class="language-plaintext highlighter-rouge">main.py</code> that load the model.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">mobilenet_v1</span>
-
-<span class="c1"># 1. load pre-tained model                                                    
-</span><span class="n">checkpoint_fp</span> <span class="o">=</span> <span class="s">'models/phase1_wpdc_vdc.pth.tar'</span>                              
-<span class="n">arch</span> <span class="o">=</span> <span class="s">'mobilenet_1'</span>                                                          
-                                                                              
-<span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">checkpoint_fp</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="k">lambda</span> <span class="n">storage</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="n">storage</span><span class="p">)[</span><span class="s">'state_dict'</span><span class="p">]</span>
-<span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mobilenet_v1</span><span class="p">,</span> <span class="n">arch</span><span class="p">)(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">62</span><span class="p">)</span>  <span class="c1"># 62 = 12(pose) + 40(shape) +10(expression)
-</span>                                                                              
-<span class="n">model_dict</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">state_dict</span><span class="p">()</span>                                               
-<span class="c1"># because the model is trained by multiple gpus, prefix module should be removed
-</span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">checkpoint</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>                                                   
-    <span class="n">model_dict</span><span class="p">[</span><span class="n">k</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'module.'</span><span class="p">,</span> <span class="s">''</span><span class="p">)]</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>                      
-<span class="n">model</span><span class="p">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_dict</span><span class="p">)</span>        
-</code></pre></div></div>
-
-<p>Now let’s add a few lines to <a href="https://pytorch.org/docs/stable/onnx.html">export the model to Onnx</a></p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Batch size, C, H, W
-</span><span class="n">dummy_input</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="p">)</span>
-
-<span class="n">torch</span><span class="p">.</span><span class="n">onnx</span><span class="p">.</span><span class="n">export</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dummy_input</span><span class="p">,</span> <span class="s">"3ddfa.onnx"</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">input_names</span><span class="o">=</span><span class="p">[</span><span class="s">"input"</span><span class="p">],</span> <span class="n">output_names</span><span class="o">=</span><span class="p">[</span><span class="s">"params"</span><span class="p">])</span>
-</code></pre></div></div>
-
-<p>Ok good, now we have a <code class="language-plaintext highlighter-rouge">3ddfa.onnx</code> file model in our directory.</p>
-
-<p>Let’s try to run it in the browser by following <a href="https://github.com/microsoft/onnxjs">OnnxJS</a> Getting Started and write a <code class="language-plaintext highlighter-rouge">index.html</code> file:</p>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;html&gt;</span>
-  <span class="nt">&lt;head&gt;</span> <span class="nt">&lt;/head&gt;</span>
-
-  <span class="nt">&lt;body&gt;</span>
-    <span class="c">&lt;!-- Load ONNX.js --&gt;</span>
-    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
-    <span class="c">&lt;!-- Code that consume ONNX.js --&gt;</span>
-    <span class="nt">&lt;script&gt;</span>
-      <span class="c1">// create a session</span>
-      <span class="kd">const</span> <span class="nx">myOnnxSession</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">onnx</span><span class="p">.</span><span class="nx">InferenceSession</span><span class="p">();</span>
-      <span class="c1">// load the ONNX model file</span>
-
-      <span class="kd">function</span> <span class="nx">getInputs</span><span class="p">(){</span>
-          <span class="kd">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Float32Array</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">120</span> <span class="o">*</span> <span class="mi">120</span><span class="p">).</span><span class="nx">fill</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-          <span class="kd">const</span> <span class="nx">tensorX</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">onnx</span><span class="p">.</span><span class="nx">Tensor</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="dl">'</span><span class="s1">float32</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">]);</span>
-          <span class="k">return</span> <span class="p">[</span><span class="nx">tensorX</span><span class="p">];</span>
-      <span class="p">}</span>
-
-      <span class="nx">myOnnxSession</span><span class="p">.</span><span class="nx">loadModel</span><span class="p">(</span><span class="dl">"</span><span class="s2">./3ddfa.onnx</span><span class="dl">"</span><span class="p">).</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="c1">// generate model input</span>
-        <span class="kd">const</span> <span class="nx">inferenceInputs</span> <span class="o">=</span> <span class="nx">getInputs</span><span class="p">();</span>
-        <span class="c1">// execute the model</span>
-        <span class="nx">myOnnxSession</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">inferenceInputs</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">output</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-          <span class="c1">// consume the output</span>
-          <span class="kd">const</span> <span class="nx">outputTensor</span> <span class="o">=</span> <span class="nx">output</span><span class="p">.</span><span class="nx">values</span><span class="p">().</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">;</span>
-          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`model output tensor: </span><span class="p">${</span><span class="nx">outputTensor</span><span class="p">}</span><span class="s2">.`</span><span class="p">);</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-    <span class="nt">&lt;/script&gt;</span>
-  <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span>
-</code></pre></div></div>
-
-<p>Now let’s run a local server with <code class="language-plaintext highlighter-rouge">python -m http.server</code> and go to <code class="language-plaintext highlighter-rouge">http://localhost:8000</code> to see your console.
-Woops ! We got an error : <code class="language-plaintext highlighter-rouge">Uncaught (in promise) TypeError: cannot resolve operator 'Shape' with opsets: ai.onnx v9</code>.</p>
-
+<h2 id="let-s-port-the-model-to-the-browser">Let's port the model to the browser.<a class="zola-anchor" href="#let-s-port-the-model-to-the-browser" aria-label="Anchor link for: let-s-port-the-model-to-the-browser"><i class="fas fa-link"></i></a> 
+</h2>
+<p>Ok, so let's isolate the first few lines in <code>main.py</code> that load the model.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">import</span><span class="z-source"> torch</span></span>
+<span class="giallo-l"><span class="z-keyword">import</span><span class="z-source"> mobilenet_v1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> 1. load pre-tained model                                                    </span></span>
+<span class="giallo-l"><span class="z-source">checkpoint_fp</span><span class="z-keyword z-operator"> =</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">models/phase1_wpdc_vdc.pth.tar</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-source">                              </span></span>
+<span class="giallo-l"><span class="z-source">arch</span><span class="z-keyword z-operator"> =</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">mobilenet_1</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-source">                                                          </span></span>
+<span class="giallo-l"><span class="z-source">                                                                              </span></span>
+<span class="giallo-l"><span class="z-source">checkpoint</span><span class="z-keyword z-operator"> =</span><span class="z-source"> torch</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">load</span><span class="z-punctuation">(</span><span class="z-meta z-function-call z-arguments z-python">checkpoint_fp</span><span class="z-punctuation">,</span><span class="z-variable z-parameter"> map_location</span><span class="z-keyword z-operator">=</span><span class="z-storage z-type">lambda</span><span class="z-variable z-parameter"> storage</span><span class="z-punctuation">,</span><span class="z-variable z-parameter"> loc</span><span class="z-punctuation">:</span><span class="z-meta z-function-call z-arguments z-python"> storage</span><span class="z-punctuation">)</span><span class="z-punctuation">[</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">state_dict</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-punctuation">]</span></span>
+<span class="giallo-l"><span class="z-source">model</span><span class="z-keyword z-operator"> =</span><span class="z-support z-function z-builtin z-python"> getattr</span><span class="z-punctuation">(</span><span class="z-meta z-function-call z-arguments z-python">mobilenet_v1</span><span class="z-punctuation">,</span><span class="z-meta z-function-call z-arguments z-python"> arch</span><span class="z-punctuation">)</span><span class="z-punctuation">(</span><span class="z-variable z-parameter">num_classes</span><span class="z-keyword z-operator">=</span><span class="z-constant z-numeric">62</span><span class="z-punctuation">)</span><span class="z-punctuation z-definition z-comment">  #</span><span class="z-comment"> 62 = 12(pose) + 40(shape) +10(expression)</span></span>
+<span class="giallo-l"><span class="z-source">                                                                              </span></span>
+<span class="giallo-l"><span class="z-source">model_dict</span><span class="z-keyword z-operator"> =</span><span class="z-source"> model</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">state_dict</span><span class="z-punctuation">(</span><span class="z-punctuation">)</span><span class="z-source">                                               </span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> because the model is trained by multiple gpus, prefix module should be removed</span></span>
+<span class="giallo-l"><span class="z-keyword z-control z-flow z-python">for</span><span class="z-source"> k</span><span class="z-keyword z-control z-flow z-python"> in</span><span class="z-source"> checkpoint</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">keys</span><span class="z-punctuation">(</span><span class="z-punctuation">)</span><span class="z-punctuation">:</span><span class="z-source">                                                   </span></span>
+<span class="giallo-l"><span class="z-meta z-indexed-name z-python">    model_dict</span><span class="z-punctuation">[</span><span class="z-meta z-item-access z-python">k</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">replace</span><span class="z-punctuation">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">module.</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-punctuation">,</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-punctuation">)</span><span class="z-punctuation">]</span><span class="z-keyword z-operator"> =</span><span class="z-meta z-indexed-name z-python"> checkpoint</span><span class="z-punctuation">[</span><span class="z-meta z-item-access z-python">k</span><span class="z-punctuation">]</span><span class="z-source">                      </span></span>
+<span class="giallo-l"><span class="z-source">model</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">load_state_dict</span><span class="z-punctuation">(</span><span class="z-meta z-function-call z-arguments z-python">model_dict</span><span class="z-punctuation">)</span><span class="z-source">        </span></span></code></pre>
+<p>Now let's add a few lines to <a rel="nofollow external" href="https://pytorch.org/docs/stable/onnx.html">export the model to Onnx</a></p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Batch size, C, H, W</span></span>
+<span class="giallo-l"><span class="z-source">dummy_input</span><span class="z-keyword z-operator"> =</span><span class="z-source"> torch</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">zeros</span><span class="z-punctuation">(</span><span class="z-punctuation">(</span><span class="z-constant z-numeric">1</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 3</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 120</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 120</span><span class="z-punctuation">)</span><span class="z-punctuation"> )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-source">torch</span><span class="z-punctuation">.</span><span class="z-source">onnx</span><span class="z-punctuation">.</span><span class="z-meta z-function-call z-python">export</span><span class="z-punctuation">(</span><span class="z-meta z-function-call z-arguments z-python">model</span><span class="z-punctuation">,</span><span class="z-meta z-function-call z-arguments z-python"> dummy_input</span><span class="z-punctuation">,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">3ddfa.onnx</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-punctuation">,</span><span class="z-variable z-parameter"> verbose</span><span class="z-keyword z-operator">=</span><span class="z-constant z-language z-python">True</span><span class="z-punctuation">,</span><span class="z-variable z-parameter"> input_names</span><span class="z-keyword z-operator">=</span><span class="z-punctuation">[</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">input</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-punctuation">]</span><span class="z-punctuation">,</span><span class="z-variable z-parameter"> output_names</span><span class="z-keyword z-operator">=</span><span class="z-punctuation">[</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">params</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-punctuation">]</span><span class="z-punctuation">)</span></span></code></pre>
+<p>Ok good, now we have a <code>3ddfa.onnx</code> file model in our directory.</p>
+<p>Let's try to run it in the browser by following <a rel="nofollow external" href="https://github.com/microsoft/onnxjs">OnnxJS</a> Getting Started and write a <code>index.html</code> file:</p>
+<pre class="giallo z-code"><code data-lang="html"><span class="giallo-l"><span class="z-punctuation z-definition z-tag">&lt;</span><span class="z-entity z-name z-tag">html</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-tag">  &lt;</span><span class="z-entity z-name z-tag">head</span><span class="z-punctuation z-definition z-tag">&gt;</span><span class="z-punctuation z-definition z-tag"> &lt;/</span><span class="z-entity z-name z-tag">head</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-tag">  &lt;</span><span class="z-entity z-name z-tag">body</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    &lt;!--</span><span class="z-comment"> Load ONNX.js </span><span class="z-punctuation z-definition z-comment">--&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-tag">    &lt;</span><span class="z-entity z-name z-tag">script</span><span class="z-entity z-other z-attribute-name"> src</span><span class="z-punctuation z-separator z-key-value">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-punctuation z-definition z-tag">&gt;</span><span class="z-source">&lt;</span><span class="z-punctuation z-definition z-tag">/</span><span class="z-entity z-name z-tag">script</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    &lt;!--</span><span class="z-comment"> Code that consume ONNX.js </span><span class="z-punctuation z-definition z-comment">--&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-tag">    &lt;</span><span class="z-entity z-name z-tag">script</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">      //</span><span class="z-comment"> create a session</span></span>
+<span class="giallo-l"><span class="z-storage z-type">      const</span><span class="z-variable z-other z-constant z-js"> myOnnxSession</span><span class="z-keyword z-operator"> =</span><span class="z-keyword z-operator z-new"> new</span><span class="z-source"> onnx</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">InferenceSession</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">      //</span><span class="z-comment"> load the ONNX model file</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">      function</span><span class="z-entity z-name z-function"> getInputs</span><span class="z-punctuation">(</span><span class="z-punctuation">)</span><span class="z-punctuation">{</span></span>
+<span class="giallo-l"><span class="z-storage z-type">          const</span><span class="z-variable z-other z-constant z-js"> x</span><span class="z-keyword z-operator"> =</span><span class="z-keyword z-operator z-new"> new</span><span class="z-entity z-name z-function"> Float32Array</span><span class="z-source">(</span><span class="z-constant z-numeric">1</span><span class="z-keyword z-operator"> *</span><span class="z-constant z-numeric"> 3</span><span class="z-keyword z-operator"> *</span><span class="z-constant z-numeric"> 120</span><span class="z-keyword z-operator"> *</span><span class="z-constant z-numeric"> 120</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">fill</span><span class="z-source">(</span><span class="z-constant z-numeric">1</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">          const</span><span class="z-variable z-other z-constant z-js"> tensorX</span><span class="z-keyword z-operator"> =</span><span class="z-keyword z-operator z-new"> new</span><span class="z-source"> onnx</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">Tensor</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">x</span><span class="z-punctuation">,</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">float32</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-punctuation">,</span><span class="z-source"> [</span><span class="z-constant z-numeric">1</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 3</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 120</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 120</span><span class="z-source">]</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-keyword">          return</span><span class="z-source"> [</span><span class="z-variable z-other z-readwrite">tensorX</span><span class="z-source">]</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">      }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-source">      myOnnxSession</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">loadModel</span><span class="z-source">(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">./3ddfa.onnx</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">then</span><span class="z-source">(</span><span class="z-punctuation">(</span><span class="z-punctuation">)</span><span class="z-storage z-type"> =&gt;</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> generate model input</span></span>
+<span class="giallo-l"><span class="z-storage z-type">        const</span><span class="z-variable z-other z-constant z-js"> inferenceInputs</span><span class="z-keyword z-operator"> =</span><span class="z-entity z-name z-function"> getInputs</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">        //</span><span class="z-comment"> execute the model</span></span>
+<span class="giallo-l"><span class="z-source">        myOnnxSession</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">run</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">inferenceInputs</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">then</span><span class="z-source">(</span><span class="z-punctuation">(</span><span class="z-variable z-parameter">output</span><span class="z-punctuation">)</span><span class="z-storage z-type"> =&gt;</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">          //</span><span class="z-comment"> consume the output</span></span>
+<span class="giallo-l"><span class="z-storage z-type">          const</span><span class="z-variable z-other z-constant z-js"> outputTensor</span><span class="z-keyword z-operator"> =</span><span class="z-source"> output</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">values</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">next</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">value</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">          console</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">log</span><span class="z-source">(</span><span class="z-punctuation z-definition z-string">`</span><span class="z-string">model output tensor: </span><span class="z-punctuation">${</span><span class="z-variable z-other z-readwrite">outputTensor</span><span class="z-punctuation">}</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">`</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">        }</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">      }</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">    &lt;</span><span class="z-punctuation z-definition z-tag">/</span><span class="z-entity z-name z-tag">script</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-tag">  &lt;/</span><span class="z-entity z-name z-tag">body</span><span class="z-punctuation z-definition z-tag">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-tag">&lt;/</span><span class="z-entity z-name z-tag">html</span><span class="z-punctuation z-definition z-tag">&gt;</span></span></code></pre>
+<p>Now let's run a local server with <code>python -m http.server</code> and go to <code>http://localhost:8000</code> to see your console.
+Woops ! We got an error : <code>Uncaught (in promise) TypeError: cannot resolve operator 'Shape' with opsets: ai.onnx v9</code>.</p>
 <p>Actually onnx.js cannot infer dynamic shapes the same way PyTorch can. We can edit that by hardcoding
-some values within a <code class="language-plaintext highlighter-rouge">Reshape</code> (which <em>is</em> supported).</p>
-
-<p>In <code class="language-plaintext highlighter-rouge">mobilenet_v1.py</code>  line 144, edit <code class="language-plaintext highlighter-rouge">x = x.view(x.shape(0), -1)</code> into <code class="language-plaintext highlighter-rouge">x.view(1, 1024)</code>. Now re-export your onnx file.</p>
-
-<p>It’s working ! (Well we have values.)</p>
-
-<h2 id="putting-that-model-in-an-actual-demo-product">
-<a class="anchor" href="#putting-that-model-in-an-actual-demo-product" aria-hidden="true"><span class="octicon octicon-link"></span></a>Putting that model in an actual demo product.</h2>
-
-<p>Ok so this is a bit more intensive work, so we’re not going to detail every part, but focus on the most important parts.</p>
-
-<h3 id="get-the-webcam-data">
-<a class="anchor" href="#get-the-webcam-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Get the webcam data</h3>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span>
-<span class="k">if</span> <span class="p">(</span><span class="nb">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nb">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span><span class="na">video</span><span class="p">:</span> <span class="p">{</span><span class="na">facingMode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">user</span><span class="dl">'</span><span class="p">}})</span>
-    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">video</span><span class="p">.</span><span class="nx">srcObject</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">;</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">video</span><span class="p">.</span><span class="nx">play</span><span class="p">().</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-                    <span class="c1">// That draws the video on a canvas.</span>
-                    <span class="nx">that</span><span class="p">.</span><span class="nx">facedetector</span><span class="p">.</span><span class="nx">loadModel</span><span class="p">()</span>
-                    <span class="nx">that</span><span class="p">.</span><span class="nx">loop</span><span class="p">()</span>
-            <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-                <span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">Error launching webcam </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">e</span><span class="p">)</span>
-            <span class="p">});</span>
-
-    <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
-        <span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">No webcam detected </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
-    <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<h3 id="get-the-3d-faces-from-the-image">
-<a class="anchor" href="#get-the-3d-faces-from-the-image" aria-hidden="true"><span class="octicon octicon-link"></span></a>Get the 3d faces from the image</h3>
-
-<p>We’re using <a href="https://github.com/justadudewhohacks/face-api.js">face detector</a> to get where the faces are on the current image, then run our model on each face in the image.</p>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">outcanvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">2d</span><span class="dl">'</span><span class="p">)</span><span class="o">!</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">detections</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">faceapi</span><span class="p">.</span><span class="nx">detectAllFaces</span><span class="p">(</span>
-  <span class="nx">incanvas</span><span class="p">,</span>
-  <span class="k">new</span> <span class="nx">faceapi</span><span class="p">.</span><span class="nx">TinyFaceDetectorOptions</span><span class="p">(),</span>
-<span class="p">);</span>
-
-<span class="kd">var</span> <span class="nx">vertices</span> <span class="o">=</span> <span class="p">[];</span>
-<span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">detections</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">detection</span> <span class="o">=</span> <span class="nx">detections</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-  <span class="c1">// We get a 1x3x120x120 Tensor here.</span>
-  <span class="c1">// We could batch that in theory, but simplicity here.</span>
-  <span class="kd">const</span> <span class="nx">inferenceInputs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInputs</span><span class="p">(</span><span class="nx">incanvas</span><span class="p">,</span> <span class="nx">detection</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">outputData</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">session</span><span class="o">!</span><span class="p">.</span><span class="nx">run</span><span class="p">([</span><span class="nx">inferenceInputs</span><span class="p">]);</span>
-  <span class="kd">const</span> <span class="nx">output</span> <span class="o">=</span> <span class="nx">outputData</span><span class="p">.</span><span class="nx">values</span><span class="p">().</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">;</span>
-
-  <span class="c1">// We need a reconstruction.</span>
-  <span class="kd">const</span> <span class="nx">face_vertices</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reconstruct68</span><span class="p">(</span><span class="nx">output</span><span class="p">);</span>
-  
-  <span class="c1">// Ellipsed code where we fuse various meshes to only run a single rotation</span>
-  <span class="c1">// and render process (we need to render to occlude the glasses in 3d with</span>
-  <span class="c1">// a transparent mesh of the face.</span>
-<span class="p">}</span>
-
-<span class="nx">ctx</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">incanvas</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="c1">// Drawing back the occluded glasses on the webcam canvas.</span>
-<span class="k">this</span><span class="p">.</span><span class="nx">drawGlasses</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">scene</span><span class="p">,</span> <span class="nx">outcanvas</span><span class="p">);</span>
-</code></pre></div></div>
-
-<h3 id="reconstruct-the-vertices">
-<a class="anchor" href="#reconstruct-the-vertices" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reconstruct the vertices.</h3>
-
-<p>As it turns out the Rotation ($R$) + Offset ($p$) we’ve seen in the first part is not really what it seems, $R$ is just a 3x3 matrix, nothing forces it to be rotation (meaning determinant 1). As it turns out the model, changes the determinant of this matrix quite heavily throughout time. Using it as is within our demo, would mean that glasses would grow large, then small and get deformed all the time.</p>
-
-<p>In order to fix this, we could fix the model of course, but it would require recreating a dataset, changing the loss functions and so on. But that’s at least a full week to run that, and nothing guarantees that it would work. It could still fail because the morphable model lacks expressability, or you can’t recreate the dataset because of some other issues and so on. That’s of course the best course of action for a full featured product. But it won’t ship fast.</p>
-
+some values within a <code>Reshape</code> (which <em>is</em> supported).</p>
+<p>In <code>mobilenet_v1.py</code>  line 144, edit <code>x = x.view(x.shape(0), -1)</code> into <code>x.view(1, 1024)</code>. Now re-export your onnx file.</p>
+<p>It's working ! (Well we have values.)</p>
+<h2 id="putting-that-model-in-an-actual-demo-product">Putting that model in an actual demo product.<a class="zola-anchor" href="#putting-that-model-in-an-actual-demo-product" aria-label="Anchor link for: putting-that-model-in-an-actual-demo-product"><i class="fas fa-link"></i></a> 
+</h2>
+<p>Ok so this is a bit more intensive work, so we're not going to detail every part, but focus on the most important parts.</p>
+<h3 id="get-the-webcam-data">Get the webcam data<a class="zola-anchor" href="#get-the-webcam-data" aria-label="Anchor link for: get-the-webcam-data"><i class="fas fa-link"></i></a> 
+</h3>
+<pre class="giallo z-code"><code data-lang="javascript"><span class="giallo-l"><span class="z-storage z-type">var</span><span class="z-variable z-other z-readwrite"> that</span><span class="z-keyword z-operator"> =</span><span class="z-variable z-language z-this"> this</span></span>
+<span class="giallo-l"><span class="z-keyword">if</span><span class="z-source"> (</span><span class="z-source">navigator</span><span class="z-punctuation z-accessor">.</span><span class="z-source">mediaDevices</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">getUserMedia</span><span class="z-source">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-source">  navigator</span><span class="z-punctuation z-accessor">.</span><span class="z-source">mediaDevices</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">getUserMedia</span><span class="z-source">(</span><span class="z-punctuation">{</span><span class="z-source">video</span><span class="z-punctuation z-separator z-key-value">:</span><span class="z-punctuation"> {</span><span class="z-source">facingMode</span><span class="z-punctuation z-separator z-key-value">:</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">user</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-punctuation">}</span><span class="z-punctuation">}</span><span class="z-source">)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-accessor">    .</span><span class="z-entity z-name z-function">then</span><span class="z-source">(</span><span class="z-storage z-type">function</span><span class="z-punctuation">(</span><span class="z-variable z-parameter">stream</span><span class="z-punctuation">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-source">            that</span><span class="z-punctuation z-accessor">.</span><span class="z-source">video</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">srcObject</span><span class="z-keyword z-operator"> =</span><span class="z-variable z-other z-readwrite"> stream</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">            that</span><span class="z-punctuation z-accessor">.</span><span class="z-source">video</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">play</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">then</span><span class="z-source">(</span><span class="z-punctuation">(</span><span class="z-punctuation">)</span><span class="z-storage z-type"> =&gt;</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">                    //</span><span class="z-comment"> That draws the video on a canvas.</span></span>
+<span class="giallo-l"><span class="z-source">                    that</span><span class="z-punctuation z-accessor">.</span><span class="z-source">facedetector</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">loadModel</span><span class="z-source">(</span><span class="z-source">)</span></span>
+<span class="giallo-l"><span class="z-source">                    that</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">loop</span><span class="z-source">(</span><span class="z-source">)</span></span>
+<span class="giallo-l"><span class="z-punctuation">            }</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">catch</span><span class="z-source">(</span><span class="z-punctuation">(</span><span class="z-variable z-parameter">e</span><span class="z-punctuation">)</span><span class="z-storage z-type"> =&gt;</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">                alert</span><span class="z-source">(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Error launching webcam </span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-keyword z-operator"> +</span><span class="z-variable z-other z-readwrite"> e</span><span class="z-source">)</span></span>
+<span class="giallo-l"><span class="z-punctuation">            }</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation">    }</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">catch</span><span class="z-source">(</span><span class="z-storage z-type">function</span><span class="z-punctuation">(</span><span class="z-variable z-parameter">e</span><span class="z-punctuation">)</span><span class="z-punctuation">{</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-function">        alert</span><span class="z-source">(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">No webcam detected </span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-keyword z-operator"> +</span><span class="z-variable z-other z-readwrite"> e</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">    }</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">}</span></span></code></pre><h3 id="get-the-3d-faces-from-the-image">Get the 3d faces from the image<a class="zola-anchor" href="#get-the-3d-faces-from-the-image" aria-label="Anchor link for: get-the-3d-faces-from-the-image"><i class="fas fa-link"></i></a> 
+</h3>
+<p>We're using <a rel="nofollow external" href="https://github.com/justadudewhohacks/face-api.js">face detector</a> to get where the faces are on the current image, then run our model on each face in the image.</p>
+<pre class="giallo z-code"><code data-lang="javascript"><span class="giallo-l"><span class="z-storage z-type">var</span><span class="z-variable z-other z-readwrite"> ctx</span><span class="z-keyword z-operator"> =</span><span class="z-source"> outcanvas</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">getContext</span><span class="z-source">(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">2d</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-source">)</span><span class="z-keyword z-operator">!</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">const</span><span class="z-variable z-other z-constant z-js"> detections</span><span class="z-keyword z-operator"> =</span><span class="z-keyword"> await</span><span class="z-source"> faceapi</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">detectAllFaces</span><span class="z-source">(</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-readwrite">  incanvas</span><span class="z-punctuation">,</span></span>
+<span class="giallo-l"><span class="z-keyword z-operator z-new">  new</span><span class="z-source"> faceapi</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">TinyFaceDetectorOptions</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation">,</span></span>
+<span class="giallo-l"><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">var</span><span class="z-variable z-other z-readwrite"> vertices</span><span class="z-keyword z-operator"> =</span><span class="z-source"> [</span><span class="z-source">]</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-keyword">for</span><span class="z-source"> (</span><span class="z-variable z-other z-readwrite">i</span><span class="z-keyword z-operator"> =</span><span class="z-constant z-numeric"> 0</span><span class="z-punctuation">;</span><span class="z-variable z-other z-readwrite"> i</span><span class="z-keyword z-operator"> &lt;</span><span class="z-source"> detections</span><span class="z-punctuation z-accessor">.</span><span class="z-source">length</span><span class="z-punctuation">;</span><span class="z-variable z-other z-readwrite"> i</span><span class="z-keyword z-operator"> +=</span><span class="z-constant z-numeric"> 1</span><span class="z-source">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  var</span><span class="z-variable z-other z-readwrite"> detection</span><span class="z-keyword z-operator"> =</span><span class="z-variable z-other z-readwrite"> detections</span><span class="z-source">[</span><span class="z-variable z-other z-readwrite">i</span><span class="z-source">]</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> We get a 1x3x120x120 Tensor here.</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> We could batch that in theory, but simplicity here.</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  const</span><span class="z-variable z-other z-constant z-js"> inferenceInputs</span><span class="z-keyword z-operator"> =</span><span class="z-variable z-language z-this"> this</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">getInputs</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">incanvas</span><span class="z-punctuation">,</span><span class="z-variable z-other z-readwrite"> detection</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  const</span><span class="z-variable z-other z-constant z-js"> outputData</span><span class="z-keyword z-operator"> =</span><span class="z-keyword"> await</span><span class="z-variable z-language z-this"> this</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">session</span><span class="z-keyword z-operator">!</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">run</span><span class="z-source">(</span><span class="z-source">[</span><span class="z-variable z-other z-readwrite">inferenceInputs</span><span class="z-source">]</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  const</span><span class="z-variable z-other z-constant z-js"> output</span><span class="z-keyword z-operator"> =</span><span class="z-source"> outputData</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">values</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">next</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">value</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> We need a reconstruction.</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  const</span><span class="z-variable z-other z-constant z-js"> face_vertices</span><span class="z-keyword z-operator"> =</span><span class="z-variable z-language z-this"> this</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">reconstruct68</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">output</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">  </span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> Ellipsed code where we fuse various meshes to only run a single rotation</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> and render process (we need to render to occlude the glasses in 3d with</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  //</span><span class="z-comment"> a transparent mesh of the face.</span></span>
+<span class="giallo-l"><span class="z-punctuation">}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-source">ctx</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">drawImage</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">incanvas</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 0</span><span class="z-punctuation">,</span><span class="z-constant z-numeric"> 0</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">//</span><span class="z-comment"> Drawing back the occluded glasses on the webcam canvas.</span></span>
+<span class="giallo-l"><span class="z-variable z-language z-this">this</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">drawGlasses</span><span class="z-source">(</span><span class="z-variable z-language z-this">this</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">scene</span><span class="z-punctuation">,</span><span class="z-variable z-other z-readwrite"> outcanvas</span><span class="z-source">)</span><span class="z-punctuation">;</span></span></code></pre><h3 id="reconstruct-the-vertices">Reconstruct the vertices.<a class="zola-anchor" href="#reconstruct-the-vertices" aria-label="Anchor link for: reconstruct-the-vertices"><i class="fas fa-link"></i></a> 
+</h3>
+<p>As it turns out the Rotation ($R$) + Offset ($p$) we've seen in the first part is not really what it seems, $R$ is just a 3x3 matrix, nothing forces it to be rotation (meaning determinant 1). As it turns out the model, changes the determinant of this matrix quite heavily throughout time. Using it as is within our demo, would mean that glasses would grow large, then small and get deformed all the time.</p>
+<p>In order to fix this, we could fix the model of course, but it would require recreating a dataset, changing the loss functions and so on. But that's at least a full week to run that, and nothing guarantees that it would work. It could still fail because the morphable model lacks expressability, or you can't recreate the dataset because of some other issues and so on. That's of course the best course of action for a full featured product. But it won't ship fast.</p>
 <p>A much easier way is to recover the real rotation, scale and offset by running a small gradient descent loop locally, we know they exist because a real face does <em>not</em> change scale across time, rotation and offset tend to get small changes frame to frame.</p>
-
-<p>So what we’re going to do, is reconstruct 68 vertices from the faces from the model. (we need more that 3 to stabilise the solution, 53k is way overboard) and <code class="language-plaintext highlighter-rouge">solve</code> the equation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>face vertices</mtext><mo>=</mo><mi>R</mi><mo>×</mo><mi>s</mi><mo>×</mo><mtext>glass vertices</mtext><mo>+</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">\text{face vertices} = R \times s \times \text{glass vertices} + p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord text"><span class="mord">face vertices</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord text"><span class="mord">glass vertices</span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span>.</p>
-
-<p>That’s 13 params (9 + 1 + 3) for 68 equations. Inverting that system is not very practical as far as I know in javasript, so we’re going to simply run a gradient descent. It should be faster than inversion on subsequent updates (when the solution is close to the previous solution).</p>
-
-<p>The full <a href="https://github.com/Narsil/face/blob/master/src/solver.ts">code</a> is a bit scary looking (definitely not the way I would solve this now) but mostly amounts to manually working the gradient steps.</p>
-
-<h3 id="add-glasses-on-that-model">
-<a class="anchor" href="#add-glasses-on-that-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add glasses on that model.</h3>
-
-<p>If we added the glasses mesh right away, we would have an occlusion problem where the back branch would show on top of your face. What we’re going to do is to have a grouped mesh of the glasses <em>and</em> a transparent face (we’ll use a mean normal face to keep computation low) so that the 3d rendering will occlude the back branch of the glasses.</p>
-
+<p>So what we're going to do, is reconstruct 68 vertices from the faces from the model. (we need more that 3 to stabilise the solution, 53k is way overboard) and <code>solve</code> the equation $$ \text{face vertices} = R \times s \times \text{glass vertices} + p $$.</p>
+<p>That's 13 params (9 + 1 + 3) for 68 equations. Inverting that system is not very practical as far as I know in javasript, so we're going to simply run a gradient descent. It should be faster than inversion on subsequent updates (when the solution is close to the previous solution).</p>
+<p>The full <a rel="nofollow external" href="https://github.com/Narsil/face/blob/master/src/solver.ts">code</a> is a bit scary looking (definitely not the way I would solve this now) but mostly amounts to manually working the gradient steps.</p>
+<h3 id="add-glasses-on-that-model">Add glasses on that model.<a class="zola-anchor" href="#add-glasses-on-that-model" aria-label="Anchor link for: add-glasses-on-that-model"><i class="fas fa-link"></i></a> 
+</h3>
+<p>If we added the glasses mesh right away, we would have an occlusion problem where the back branch would show on top of your face. What we're going to do is to have a grouped mesh of the glasses <em>and</em> a transparent face (we'll use a mean normal face to keep computation low) so that the 3d rendering will occlude the back branch of the glasses.</p>
 <p>Adding the general face:</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="nx">add_face</span><span class="p">(</span><span class="nx">transparent</span><span class="p">?:</span> <span class="nx">boolean</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">transparent</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">transparent</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="kd">const</span> <span class="nb">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">scene</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PUBLIC_URL</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">/3dmodels/face.fbx</span><span class="dl">'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">face</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">transparent</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">const</span> <span class="nx">mesh</span> <span class="o">=</span> <span class="nx">face</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">Mesh</span><span class="p">;</span>
-      <span class="nx">mesh</span><span class="p">.</span><span class="nx">renderOrder</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-      <span class="kd">const</span> <span class="nx">material</span> <span class="o">=</span> <span class="nx">mesh</span><span class="p">.</span><span class="nx">material</span> <span class="k">as</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">Material</span><span class="p">;</span>
-  
-      <span class="c1">// Makes the face occluding, but we write the background</span>
-      <span class="c1">// Color, so alpha instead of texture.</span>
-      <span class="nx">material</span><span class="p">.</span><span class="nx">colorWrite</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="nb">self</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">face</span><span class="p">);</span>
-    <span class="nb">self</span><span class="p">.</span><span class="nx">reset_clones</span><span class="p">();</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
+<pre class="giallo z-code"><code data-lang="javascript"><span class="giallo-l"><span class="z-variable z-other z-readwrite">public</span><span class="z-entity z-name z-function"> add_face</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">transparent</span><span class="z-keyword z-operator">?</span><span class="z-keyword z-operator">:</span><span class="z-variable z-other z-readwrite"> boolean</span><span class="z-source">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span class="z-source"> (</span><span class="z-variable z-other z-readwrite">transparent</span><span class="z-keyword z-operator"> ===</span><span class="z-constant z-language z-undefined z-js"> undefined</span><span class="z-source">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-readwrite">    transparent</span><span class="z-keyword z-operator"> =</span><span class="z-constant z-language z-boolean"> true</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">  }</span></span>
+<span class="giallo-l"><span class="z-storage z-type">  const</span><span class="z-variable z-other z-constant z-js"> self</span><span class="z-keyword z-operator"> =</span><span class="z-variable z-language z-this"> this</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-variable z-language z-this">    this</span><span class="z-punctuation z-accessor">.</span><span class="z-source">scene</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">load</span><span class="z-source">(</span><span class="z-source">process</span><span class="z-punctuation z-accessor">.</span><span class="z-source">env</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-constant">PUBLIC_URL</span><span class="z-keyword z-operator"> +</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">/3dmodels/face.fbx</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-source">)</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">then</span><span class="z-source">(</span><span class="z-variable z-parameter">face</span><span class="z-storage z-type"> =&gt;</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    if</span><span class="z-source"> (</span><span class="z-variable z-other z-readwrite">transparent</span><span class="z-source">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type">      const</span><span class="z-variable z-other z-constant z-js"> mesh</span><span class="z-keyword z-operator"> =</span><span class="z-source"> face</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">children</span><span class="z-source">[</span><span class="z-constant z-numeric">0</span><span class="z-source">]</span><span class="z-keyword"> as</span><span class="z-entity z-name z-type"> THREE</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-type">Mesh</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">      mesh</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">renderOrder</span><span class="z-keyword z-operator"> =</span><span class="z-keyword z-operator"> -</span><span class="z-constant z-numeric">1</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-storage z-type">      const</span><span class="z-variable z-other z-constant z-js"> material</span><span class="z-keyword z-operator"> =</span><span class="z-source"> mesh</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">material</span><span class="z-keyword"> as</span><span class="z-entity z-name z-type"> THREE</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-type">Material</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">  </span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">      //</span><span class="z-comment"> Makes the face occluding, but we write the background</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">      //</span><span class="z-comment"> Color, so alpha instead of texture.</span></span>
+<span class="giallo-l"><span class="z-source">      material</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-property z-js">colorWrite</span><span class="z-keyword z-operator"> =</span><span class="z-constant z-language z-boolean"> false</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">    }</span></span>
+<span class="giallo-l"><span class="z-source">    self</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">add</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">face</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-source">    self</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">reset_clones</span><span class="z-source">(</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">  }</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">}</span></span></code></pre>
 <p>Adding the glasses</p>
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="nx">addElement</span><span class="p">(</span><span class="nx">element</span><span class="p">:</span> <span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">group</span><span class="p">.</span><span class="nx">add_element</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PUBLIC_URL</span> <span class="o">+</span> <span class="s2">`/3dmodels/</span><span class="p">${</span><span class="nx">element</span><span class="p">}</span><span class="s2">.fbx`</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>The whole pipeline is a bit complex to reuse meshes and run the thing efficiently (still pretty messy code) but that’s the gist, add the 2 meshes on the same scene, and hit render. Actually, we add all the faces and all the glasses to the same global scene and render only once.</p>
-
-<h2 id="conclusion">
-<a class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h2>
-
-<p>So we’ve seen how we put a model from a working paper code, into an actual product.
+<pre class="giallo z-code"><code data-lang="javascript"><span class="giallo-l"><span class="z-variable z-other z-readwrite">public</span><span class="z-entity z-name z-function"> addElement</span><span class="z-source">(</span><span class="z-variable z-other z-readwrite">element</span><span class="z-source">: </span><span class="z-variable z-other z-readwrite">string</span><span class="z-source">)</span><span class="z-punctuation"> {</span></span>
+<span class="giallo-l"><span class="z-variable z-language z-this">  this</span><span class="z-punctuation z-accessor">.</span><span class="z-source">group</span><span class="z-punctuation z-accessor">.</span><span class="z-entity z-name z-function">add_element</span><span class="z-source">(</span><span class="z-source">process</span><span class="z-punctuation z-accessor">.</span><span class="z-source">env</span><span class="z-punctuation z-accessor">.</span><span class="z-variable z-other z-constant">PUBLIC_URL</span><span class="z-keyword z-operator"> +</span><span class="z-punctuation z-definition z-string"> `</span><span class="z-string">/3dmodels/</span><span class="z-punctuation">${</span><span class="z-variable z-other z-readwrite">element</span><span class="z-punctuation">}</span><span class="z-string">.fbx</span><span class="z-punctuation z-definition z-string">`</span><span class="z-source">)</span><span class="z-punctuation">;</span></span>
+<span class="giallo-l"><span class="z-punctuation">}</span></span></code></pre>
+<p>The whole pipeline is a bit complex to reuse meshes and run the thing efficiently (still pretty messy code) but that's the gist, add the 2 meshes on the same scene, and hit render. Actually, we add all the faces and all the glasses to the same global scene and render only once.</p>
+<h2 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion"><i class="fas fa-link"></i></a> 
+</h2>
+<p>So we've seen how we put a model from a working paper code, into an actual product.
 It necessary to remember to understand how the paper actually works vs pretends to work
 is important, it was super important here to understand the $R$ and $p$ and $s$ factors into
-our reconstruction. It also demonstrates that the paper’s authors didn’t realize that what they thought
+our reconstruction. It also demonstrates that the paper's authors didn't realize that what they thought
 was a pose actually contains <em>a lot</em> of distortion, so it does not work how they expected.</p>
-
 <p>It also shows that putting ML in a product even for a very simple demo requires understanding
-many other technologies. Here it meant getting the webcam feed, getting Onnx layers simplfied, understanding <a href="https://threejs.org/">Three.js</a> to master occlusion, etc… But by going full browser you can put your demo out and never worry about the cost !</p>
+many other technologies. Here it meant getting the webcam feed, getting Onnx layers simplfied, understanding <a rel="nofollow external" href="https://threejs.org/">Three.js</a> to master occlusion, etc... But by going full browser you can put your demo out and never worry about the cost !</p>
+<p>Check out the <a rel="nofollow external" href="https://github.com/Narsil/face">Full source code</a> for all the quirks.</p>
 
-<p>Check out the <a href="https://github.com/Narsil/face">Full source code</a> for all the quirks.</p>
-
-  </div><a class="u-url" href="/2020/07/29/deploying-model-in-the-browser.html" hidden></a>
+  </section>
+  <footer>
+    <nav class="c-pagination p-pagination">
+      <div class="c-pagination__ctrl">
+        <div class="c-pagination__newer">
+          
+        </div>
+        <div class="c-pagination__older">
+          
+        </div>
+      </div>
+    </nav>
+  </footer>
 </article>
-      </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="/"></data>
+            
+        </main>
 
-  <div class="wrapper">
 
-    <h2 class="footer-heading">Narsil</h2>
+      <footer class="l-footer">
+          
+<nav class="l-nav">
+  <a href="https:&#x2F;&#x2F;nodata.dev/">Home</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/about/">About</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/tags/">Tags</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/categories/">Categories</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/search/">Search</a>
+  <a href="https:&#x2F;&#x2F;nodata.dev/atom.xml">Feed</a>
+</nav>
+<p class="p-copyright">
+              
+              © Nicolas Patry
+          </p>
 
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">Narsil</li></ul>
-      </div>
+      </footer>
 
-      <div class="footer-col footer-col-2"><ul class="social-media-list">
-  <li>
-    <a
-      href="https://github.com/Narsil"
-      ><svg class="social svg-icon">
-        <use
-          xlink:href="/assets/minima-social-icons.svg#github"
-        ></use>
-      </svg>
-      <span class="username"></span></a
-    >
-  </li><li>
-    <a
-      href="https://www.twitter.com/narsilou"
-      ><svg class="social svg-icon">
-        <use
-          xlink:href="/assets/minima-social-icons.svg#twitter"
-        ></use>
-      </svg>
-      <span class="username">narsilou</span></a
-    >
-  </li></ul>
-</div>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140784374-1"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
 
-      <div class="footer-col footer-col-3">
-        <p>Small experiments insights from ML and software development.</p>
-      </div>
-    </div>
-
-  </div>
-
-</footer>
-</body>
-
+          gtag('config', 'UA-140784374-1');
+      </script>
+    </body>
 </html>
+
