@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block title %}
+<title>{{ section.title }} | {{ config.title }}</title>
+<meta property="og:title" content="{{ section.title }} | {{ config.title }}" />
+<meta name="twitter:title" content="{{ section.title }} | {{ config.title }}" />
+{% endblock title %}
+
+{% block description %}{% endblock description %}
+
+{% block content %}
+<article class="p-article">
+  <header>
+    <h1>{{ section.title }}</h1>
+  </header>
+  <section id="js-article" class="p-article__body">
+    {{ section.content | safe }}
+  </section>
+</article>
+{% endblock content %}

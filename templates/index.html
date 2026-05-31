@@ -1,0 +1,39 @@
+{% extends "zola-pickles/templates/index.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ get_url(path='custom.css') }}" />
+<link rel="stylesheet" href="{{ get_url(path='giallo-light.css') }}" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="{{ get_url(path='giallo-dark.css') }}" media="(prefers-color-scheme: dark)" />
+{# OG/Twitter image for posts that set extra.image #}
+{% if page and page.extra.image %}
+<meta property="og:image" content="{{ config.base_url }}{{ page.extra.image }}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="{{ config.base_url }}{{ page.extra.image }}" />
+{% endif %}
+
+{# KaTeX auto-render so existing $...$ and $$...$$ syntax in posts keeps working #}
+{% if config.extra.katex_enable %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"></script>
+{% endif %}
+
+{# Site nav linking to about/tags/categories/search #}
+<style>
+.l-nav { margin: 0 auto; max-width: 720px; padding: 0.5rem 1rem; font-size: 0.95rem; }
+.l-nav a { margin-right: 1rem; }
+</style>
+{% endblock extra_head %}
+
+{% block footer %}
+<nav class="l-nav">
+  <a href="{{ config.base_url }}/">Home</a>
+  <a href="{{ config.base_url }}/about/">About</a>
+  <a href="{{ config.base_url }}/tags/">Tags</a>
+  <a href="{{ config.base_url }}/categories/">Categories</a>
+  <a href="{{ config.base_url }}/search/">Search</a>
+  <a href="{{ config.base_url }}/atom.xml">Feed</a>
+</nav>
+{{ super() }}
+{% endblock footer %}

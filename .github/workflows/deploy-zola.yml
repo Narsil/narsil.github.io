@@ -1,0 +1,30 @@
+name: Build and deploy Zola site
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build site
+        uses: shalzz/zola-deploy-action@v0.20.0
+        env:
+          BUILD_ONLY: true
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Flatten slug.html/index.html -> slug.html (match Jekyll permalinks)
+        run: bash scripts/flatten-html.sh public
+
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: public
+          publish_branch: gh-pages

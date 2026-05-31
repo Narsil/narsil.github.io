@@ -1,18 +1,13 @@
 *.swp
 ~*
 *~
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-vendor
-_notebooks/.ipynb_checkpoints
-# Local Netlify folder
 .netlify
-.tweet-cache
 __pycache__
 *.pt
-settings.ini
-data/
-.bundle/
-.gems/
+
+# Nix direnv
+.direnv/
+
+# Zola build output
+public/
+static/processed_images/

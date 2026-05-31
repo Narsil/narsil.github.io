@@ -1,0 +1,134 @@
+// Centered, responsive post images
+.p-article__body img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.p-article__body figcaption {
+    text-align: center;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #888;
+}
+
+// Jupyter notebook cell styling
+.input_area pre,
+.input_area div {
+    margin-bottom: 2rem !important;
+    margin-top: 1.5rem !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+    background: #323443 !important;
+    color: #f8f8f2;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", Roboto, Ubuntu, monospace;
+    border-radius: 5px;
+}
+
+.output_area pre,
+.output_area div {
+    margin-bottom: 0.1rem !important;
+    margin-top: 0.1rem !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+}
+
+.input_area pre {
+    border-left: 1px solid lightcoral;
+}
+
+.output_area pre {
+    border-left: 1px solid grey;
+    margin-left: 1rem !important;
+}
+
+.code_cell table {
+    width: auto;
+}
+
+// Auto dark mode (no JS, follows OS via prefers-color-scheme).
+// Overrides the theme's compiled Selenized-White palette with a darker
+// Selenized-Black-derived set. Targets the same selectors the theme uses
+// in base.scss so the rules win by source-order specificity.
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #181818;
+        color: #dadada;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #ebebeb;
+    }
+
+    // Theme-specific title/text selectors with their own color rules
+    .p-title__link,
+    .p-subtitle,
+    .c-article__summary {
+        color: #ebebeb;
+    }
+
+    .c-article__title a {
+        color: #ebebeb;
+
+        &:hover {
+            color: #76c7ff;
+        }
+    }
+
+    .c-article__meta {
+        color: #9a9a9a;
+    }
+
+    a {
+        color: #4695f7;
+
+        &:hover {
+            color: #76c7ff;
+        }
+    }
+
+    del {
+        color: #888;
+    }
+
+    blockquote {
+        color: #9a9a9a;
+        border-left-color: #444;
+    }
+
+    table > thead > tr > th,
+    table > thead > tr > td {
+        background-color: #262626;
+        color: #ebebeb;
+    }
+
+    table tr {
+        background-color: #181818;
+    }
+
+    table tr:nth-child(2n) {
+        background-color: #1f1f1f;
+    }
+
+    .toc {
+        border-color: #333;
+    }
+
+    :not(pre) > code {
+        background-color: #222;
+        color: #e0e0e0;
+        padding: 0 0.25em;
+        border-radius: 3px;
+    }
+
+    // Search input from templates/search.html (inline default is browser white)
+    #search {
+        background-color: #222;
+        color: #dadada;
+        border: 1px solid #444;
+    }
+}
