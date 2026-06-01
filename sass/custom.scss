@@ -1,3 +1,11 @@
+// Dates use JetBrains Mono Italic so ISO digits align in lists.
+.c-time,
+.c-article__meta,
+time {
+    font-family: 'JetBrains Mono', monospace;
+    font-style: italic;
+}
+
 // Centered, responsive post images
 .p-article__body img {
     display: block;
