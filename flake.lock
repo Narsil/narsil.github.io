@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1779560665,
+        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "zola-pickles": "zola-pickles"
+      }
+    },
+    "zola-pickles": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1778936758,
+        "narHash": "sha256-6RQIApFf8xrmpu4WlSYh79FpbDLNqAFSIfq738/kE/Y=",
+        "owner": "lukehsiao",
+        "repo": "zola-pickles",
+        "rev": "9d70e3d470f69183f8e4c8fbc3e61037f6c338d5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lukehsiao",
+        "repo": "zola-pickles",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

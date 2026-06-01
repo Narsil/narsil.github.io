@@ -1,0 +1,13 @@
+*.swp
+~*
+*~
+.netlify
+__pycache__
+*.pt
+
+# Nix direnv
+.direnv/
+
+# Zola build output
+public/
+static/processed_images/

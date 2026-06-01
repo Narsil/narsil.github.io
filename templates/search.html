@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+
+{% block title %}
+<title>Search | {{ config.title }}</title>
+{% endblock title %}
+
+{% block description %}{% endblock description %}
+
+{% block content %}
+<article class="p-article">
+  <header>
+    <h1>Search</h1>
+  </header>
+  <section class="p-article__body">
+    <input id="search" type="search" placeholder="Type a query..."
+           style="width: 100%; padding: 0.5rem; font-size: 1rem; box-sizing: border-box;">
+    <p id="search-status" style="color: #888; margin: 0.5rem 0;"></p>
+    <ul id="search-results" style="list-style: none; padding: 0;"></ul>
+  </section>
+</article>
+
+<script src="https://cdn.jsdelivr.net/npm/elasticlunr@0.9.5/release/elasticlunr.min.js"></script>
+<script src="{{ get_url(path='search_index.en.js') }}"></script>
+<script>
+(function () {
+  const status = document.getElementById('search-status');
+  const results = document.getElementById('search-results');
+  const input = document.getElementById('search');
+
+  if (typeof window.searchIndex === 'undefined') {
+    status.textContent = 'Search index failed to load.';
+    return;
+  }
+
+  const idx = elasticlunr.Index.load(window.searchIndex);
+
+  input.addEventListener('input', function () {
+    const q = input.value.trim();
+    results.innerHTML = '';
+    if (q.length < 2) { status.textContent = ''; return; }
+    const hits = idx.search(q, { bool: 'AND', expand: true });
+    status.textContent = hits.length + ' result' + (hits.length === 1 ? '' : 's');
+    for (const h of hits.slice(0, 20)) {
+      const doc = idx.documentStore.getDoc(h.ref);
+      const li = document.createElement('li');
+      li.style.margin = '0.5rem 0';
+      const a = document.createElement('a');
+      a.href = h.ref;
+      a.textContent = doc.title || h.ref;
+      li.appendChild(a);
+      results.appendChild(li);
+    }
+  });
+})();
+</script>
+{% endblock content %}

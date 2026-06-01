@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/assets/face/static/css/main.5ee12e06.chunk.css",
+    "main.js": "/assets/face/static/js/main.b0f5fd45.chunk.js",
+    "main.js.map": "/assets/face/static/js/main.b0f5fd45.chunk.js.map",
+    "runtime~main.js": "/assets/face/static/js/runtime~main.3fba743e.js",
+    "runtime~main.js.map": "/assets/face/static/js/runtime~main.3fba743e.js.map",
+    "static/js/2.410d8023.chunk.js": "/assets/face/static/js/2.410d8023.chunk.js",
+    "static/js/2.410d8023.chunk.js.map": "/assets/face/static/js/2.410d8023.chunk.js.map",
+    "index.html": "/assets/face/index.html",
+    "precache-manifest.f526bd34df8fb46f23bd5c002b1f6f7c.js": "/assets/face/precache-manifest.f526bd34df8fb46f23bd5c002b1f6f7c.js",
+    "service-worker.js": "/assets/face/service-worker.js",
+    "static/css/main.5ee12e06.chunk.css.map": "/assets/face/static/css/main.5ee12e06.chunk.css.map",
+    "static/media/glass1.png": "/assets/face/static/media/glass1.c045335d.png",
+    "static/media/glass2.png": "/assets/face/static/media/glass2.0a0dca8a.png",
+    "static/media/glass3.png": "/assets/face/static/media/glass3.8430f745.png",
+    "static/media/glass5.png": "/assets/face/static/media/glass5.de67f8db.png"
+  }
+}

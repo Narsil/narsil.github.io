@@ -1,0 +1,60 @@
+base_url = "https://nodata.dev"
+title = "Narsil"
+description = "Small experiments insights from ML and software development."
+default_language = "en"
+
+theme = "zola-pickles"
+
+generate_feeds = true
+feed_filenames = ["atom.xml"]
+feed_limit = 20
+
+compile_sass = true
+minify_html = false
+build_search_index = true
+
+taxonomies = [
+    { name = "tags", feed = true },
+    { name = "categories", feed = true },
+]
+
+[markdown]
+render_emoji = true
+external_links_target_blank = false
+external_links_no_follow = true
+external_links_no_referrer = false
+smart_punctuation = false
+
+[markdown.highlighting]
+style = "class"
+light_theme = "catppuccin-latte"
+dark_theme = "catppuccin-mocha"
+
+[search]
+index_format = "elasticlunr_javascript"
+include_title = true
+include_description = true
+include_content = true
+
+[slugify]
+paths = "on"
+taxonomies = "on"
+anchors = "on"
+
+[link_checker]
+# Narsil/translate is a private repo owned by the author; the link is intentional
+# but anonymous link-checking will always 404.
+skip_prefixes = ["https://github.com/Narsil/translate"]
+# GitHub rewrites README anchor IDs with a "user-content-" prefix, which Zola's
+# checker can't see — so skip anchor checking for github.com (URLs themselves
+# still get checked).
+skip_anchor_prefixes = ["https://github.com/"]
+
+[extra]
+subtitle = "ML & software notes"
+copyright = "© Nicolas Patry"
+analytics = "UA-140784374-1"
+katex_enable = true
+instantpage_enable = true
+twitter_username = "narsilou"
+github_username = "Narsil"
